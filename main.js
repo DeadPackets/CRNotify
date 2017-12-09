@@ -4,6 +4,7 @@ const config = require('./config.json');
 //HTTP Server
 const express = require('express')
 const app = express();
+const sendEmail = require('./lib/sendEmail');
 
 //Some optimizations
 app.disable('x-powered-by')
