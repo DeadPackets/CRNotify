@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 //I love this library so damn much
 const cheerio = require('cheerio')
 
