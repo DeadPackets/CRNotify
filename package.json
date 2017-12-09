@@ -1,0 +1,27 @@
+{
+  "name": "crnotify",
+  "version": "1.0.0",
+  "description": "Something that tells AUS students about changes in their desired CRNs. ",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeadPackets/CRNotify.git"
+  },
+  "author": "DeadPackets (Youssef Awad)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DeadPackets/CRNotify/issues"
+  },
+  "homepage": "https://github.com/DeadPackets/CRNotify#readme",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
+    "node-horseman": "^3.3.0",
+    "nodemailer": "^4.4.1",
+    "sequelize": "^4.27.0"
+  }
+}
