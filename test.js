@@ -1,22 +1,25 @@
-var Horseman = require('node-horseman');
-const horseman = new Horseman({
-    cookiesFile: './cookies.txt',
-    diskCache: true,
-    diskCachePath: './browsercache'
-});
+const Horseman = require('node-horseman');
+
 
 //const dict = require('./crndict.json')
 
+const initDB = require('./lib/initDB')
+const db = initDB()
 
-
-
-function parseBody(body, subject) {
-    console.log(subject)
+function parseBody(body, subject, crns, resolve) {
+    console.log(crns)
+    resolve()
 }
 
 
-function fetchStatus(termID, subject) {
+function fetchStatus(termID, subject, crns) {
 
+return new Promise(function(resolve, reject){
+  const horseman = new Horseman({
+      cookiesFile: './cookies.txt',
+      diskCache: true,
+      diskCachePath: './browsercache'
+  });
 
   horseman
       .open('https://banner.aus.edu/axp3b21h/owa/bwckschd.p_disp_dyn_sched')
@@ -35,13 +38,36 @@ function fetchStatus(termID, subject) {
       .waitForNextPage()
       .html()
       .then(function(body){
-        parseBody(body, subject)
+        parseBody(body, subject, crns, resolve)
+        return horseman.close()
       })
-      .close()
+    })
 }
 
 var subjects = ['BIO', "ART", 'WRI']
+var index = -1;
 
-subjects.forEach(function(item, i){
-  fetchStatus('201820', item)
-})
+function fetchNext() {
+
+  subjects.forEach(function(item, i){
+    //Search if we even need to check this subject
+    db.CRN.findAll({where: {
+      subject: item
+    }}).then(function(crns){
+      if (crns.length > 0) {
+        console.log('crawling', item)
+        // fetchStatus('201820', item, crns).then(function(){
+        //   fetchNext()
+        // })
+      } else {
+        //No need to crawl
+        console.log('No need to crawl!', item)
+        fetchNext()
+      }
+    })
+  })
+}
+
+setTimeout(function(){
+  fetchNext()
+}, 2000)
