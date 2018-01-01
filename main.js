@@ -1,6 +1,10 @@
 //Config
 const config = require('./config.json');
 
+//Lib
+const checkCRN = require('./lib/checkCRN')
+const getUserCRNs = require('./lib/getUserCRNs')
+
 //DB
 const initDB = require('./lib/initDB')
 const db = initDB()
@@ -10,8 +14,27 @@ const express = require('express');
 const app = express();
 
 //Handlebars
-const exphbs  = require('express-handlebars');
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+const exphbs = require('express-handlebars');
+app.engine('handlebars', exphbs({
+  defaultLayout: 'main',
+  helpers: {
+    errorMessages: function(item) {
+      let final = ''
+      item.forEach(function(msg, i) {
+        final = '<div class="animated fadeIn notification is-danger">' + msg + '</div>'
+      })
+      return final;
+    },
+    successMessages: function(item) {
+      let final = ''
+      item.forEach(function(msg, i) {
+        final = '<div class="animated fadeIn notification is-success">' + msg + '</div>'
+      })
+      return final;
+    }
+  }
+}));
+
 app.set('view engine', 'handlebars');
 
 //HTTP Logger
@@ -28,6 +51,7 @@ app.use(expressSession({
   httpOnly: true,
   proxy: true,
   resave: false,
+  store: new SequelizeStore({db: db.sequelize}),
   saveUninitialized: true,
   name: 'session'
 }));
@@ -55,7 +79,7 @@ const flash = require('connect-flash');
 app.use(flash());
 
 //Some optimizations
-app.enable('view cache');
+//app.enable('view cache');
 app.disable('x-powered-by')
 app.disable('etag')
 
@@ -91,7 +115,7 @@ passport.use(new GoogleStrategy({
     } else {
       //Insert new user in DB
       db.Users.create({googleID: profile.id, token: accessToken, email: profile.emails[0].value, name: profile.displayName}).then(user => {
-      return done(null, user.dataValues)
+        return done(null, user.dataValues)
       })
     }
   })
@@ -99,7 +123,6 @@ passport.use(new GoogleStrategy({
 
 //Auth HTTP
 function isLoggedIn(req, res, next) {
-  console.log(req.isAuthenticated())
   if (req.isAuthenticated()) {
     next()
   } else {
@@ -113,29 +136,123 @@ app.get('/auth', passport.authenticate('google', {
 }))
 
 app.get('/auth/callback', passport.authenticate('google', {
-  successRedirect: '/app',
+  successRedirect: '/app/dashboard',
   failureRedirect: '/',
   failureFlash: true
 }))
 
-app.get('/logout', function(req, res) {
-  req.logout()
-  req.flash('success_message', 'You have logged out successfully.')
-  res.redirect('/')
-})
-
 //HTTP
 app.get('/', function(req, res) {
   if (req.isAuthenticated()) {
-    res.render('home', {isLoggedIn: true})
+    res.redirect('/app')
   } else {
-    res.render('home', {isLoggedIn: false})
+    res.render('home', {
+      path: 'Welcome',
+      error_messages: req.flash('error_message'),
+      success_messages: req.flash('success_message')
+    })
   }
 })
 
-app.get('/app', isLoggedIn, function(req, res) {
-  res.send(req.user)
+//Anything under /app must only be accessed by a user who is logged in
+app.use('/app', isLoggedIn)
+
+app.get('/app', function(req, res) {
+  res.redirect('/app/dashboard')
+})
+
+app.get('/app/dashboard', function(req, res) {
+  res.render('dashboard', {
+    user: req.user,
+    error_messages: req.flash('error_message'),
+    success_messages: req.flash('success_message'),
+    path: 'Dashboard'
+  })
+  //res.send(req.user)
+})
+
+app.get('/app/manage', function(req, res) {
+
+  //Fetch the user's subscribed CRNs
+  getUserCRNs(req.user, db, function(err, data){
+    res.render('manage', {
+      path: 'Manage',
+      error_messages: req.flash('error_message'),
+      success_messages: req.flash('success_message'),
+      user: req.user,
+      crnData: data
+    })
+  })
+})
+
+app.get('/app/settings', function(req, res) {
+  res.send('settings')
+})
+
+app.get('/app/logout', function(req, res) {
+  req.logout()
+  req.session.destroy();
+  res.render('logout', {path: 'Logged Out'})
+})
+
+//API
+app.post('/app/addcrn', function(req, res) {
+  if (!req.body) {
+    res.redirect('/error_400')
+  }
+
+  if (req.body.crn && req.body.currentStatus) {
+    checkCRN(req.body.crn, req.body.currentStatus, req.user, db, function(err, isNew) {
+      if (err) {
+        req.flash('error_message', err)
+        res.redirect('/app/manage')
+      } else {
+
+        //Because why not?
+        if (isNew) {
+          req.flash('success_message', 'Successfully added new CRN!')
+        } else {
+          req.flash('success_message', 'Successfully added CRN!')
+        }
+
+        res.redirect('/app/manage')
+      }
+    })
+  } else {
+    res.redirect('/error_400')
+  }
+})
+
+app.post('/app/removecrn', function(req, res) {
+  if (!req.body) {
+    res.redirect('/error_400')
+  }
+
+  if (req.body.crn) {
+    removeCRN(req.body.crn, function(err) {
+      if (err) {
+        req.flash('error_message', err)
+        res.redirect('/app/manage')
+      } else {
+        req.flash('success_message', 'Successfully removed CRN.')
+        res.redirect('/app/manage')
+      }
+    })
+  }
+})
+
+//Error 400
+app.get('/error_400', function(req, res) {
+  res.render('error_400', {path: 'Error'})
+})
+
+//404
+app.use(function(req, res) {
+  res.render('error_404', {
+    url: req.url,
+    path: 'Not Found'
+  })
 })
 
 //HTTP Server init
-app.listen(config.webserver.HTTP_PORT)
+app.listen(config.webserver.HTTP_PORT, 'localhost')

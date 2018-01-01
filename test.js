@@ -3,6 +3,7 @@ const Horseman = require('node-horseman');
 
 //const dict = require('./crndict.json')
 
+const config = require('./config.json')
 const initDB = require('./lib/initDB')
 const db = initDB()
 
@@ -45,7 +46,6 @@ return new Promise(function(resolve, reject){
 }
 
 var subjects = ['BIO', "ART", 'WRI']
-var index = -1;
 
 function fetchNext() {
 
@@ -56,7 +56,7 @@ function fetchNext() {
     }}).then(function(crns){
       if (crns.length > 0) {
         console.log('crawling', item)
-        // fetchStatus('201820', item, crns).then(function(){
+        // fetchStatus(config.misc.termID, item, crns).then(function(){
         //   fetchNext()
         // })
       } else {

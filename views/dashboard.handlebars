@@ -1,0 +1,55 @@
+<div id="app">
+
+  <div class="animated fadeInDown">
+    <h1 class="mainTitle">
+      CRNotify
+    </h1>
+  </div>
+
+  <div class="animated fadeInDown">
+    <h1 class="dashboardTitle">Welcome, {{{user.name}}}</h1>
+  </div>
+
+  {{{errorMessages error_messages}}}
+  {{{successMessages success_messages}}}
+
+  <div class="tabs is-large is-centered is-boxed">
+    <ul>
+      <li class="is-active">
+        <a class='toggle-info'>
+        <span class="icon is-small"><i class="fa fa-info-circle"></i></span>
+        <span>Info</span>
+      </a>
+      </li>
+      <li>
+        <a href="/app/manage">
+        <span class="icon is-small"><i class="fa fa-sliders"></i></span>
+        <span>Manage CRNs</span>
+      </a>
+      </li>
+      <li>
+        <a href="/app/settings">
+        <span class="icon is-small"><i class="fa fa-cogs"></i></span>
+        <span>Settings</span>
+      </a>
+      </li>
+      <li>
+        <a id="logout" href='/app/logout'>
+        <span id="logout" class="icon is-small"><i class="fa fa-sign-out"></i></span>
+        <span id="logout">Log Out</span>
+      </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="is-centered is-boxed">
+    <h1>Name: {{{user.name}}}</h1>
+    <h1>User ID: {{{user.id}}}</h1>
+    <h1>Google ID: {{{user.googleID}}}</h1>
+    <h1>Email: {{{user.email}}}</h1>
+    <h1>Account Created Date: {{{user.createdAt}}}</h1>
+  </div>
+</div>
+
+<!--All the magic is here-->
+<script href="/dashboard.js"></script>

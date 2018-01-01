@@ -1,0 +1,80 @@
+<div id="app">
+
+  <div class="animated fadeInDown">
+    <h1 class="mainTitle">
+      CRNotify
+    </h1>
+  </div>
+
+  <div class="animated fadeInDown">
+    <h1 class="dashboardTitle">Welcome, {{{user.name}}}</h1>
+  </div>
+
+  {{{errorMessages error_messages}}} {{{successMessages success_messages}}}
+
+  <div class="tabs is-large is-centered is-boxed">
+    <ul>
+      <li>
+        <a href="/app/dashboard">
+        <span class="icon is-small"><i class="fa fa-info-circle"></i></span>
+        <span>Info</span>
+      </a>
+      </li>
+      <li>
+        <a class="is-active">
+        <span class="icon is-small"><i class="fa fa-sliders"></i></span>
+        <span>Manage CRNs</span>
+      </a>
+      </li>
+      <li>
+        <a href="/app/settings">
+        <span class="icon is-small"><i class="fa fa-cogs"></i></span>
+        <span>Settings</span>
+      </a>
+      </li>
+      <li>
+        <a id="logout" href='/app/logout'>
+        <span id="logout" class="icon is-small"><i class="fa fa-sign-out"></i></span>
+        <span id="logout">Log Out</span>
+      </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="animated fadeInUp is-fullwidth">
+    <h1 style="font-size: 32px; padding-bottom: 20px;">Want to add a new CRN?</h1>
+
+    <form action="/app/addcrn" method="post">
+      <div class="field">
+        <label class="label">Insert CRN Here:</label>
+        <div class="control has-icons-right">
+          <input class="input" type="text" name="crn" placeholder="Some random CRN (eg: 22666)">
+          <span class="icon is-small is-right">
+                <i class="fa fa-id-card"></i>
+            </span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Current status of CRN:</label>
+        <div class="control has-icons-right">
+          <div class="select">
+            <select name="currentStatus">
+              <option>Closed</option>
+              <option>Open</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="button is-info">Submit</button>
+    </form>
+  </div>
+
+
+  <div id="crnDiv" class="column is-half">
+    <h1>Your CRNs</h1>
+  </div>
+</div>
+
+<!--All the magic is here-->
+<script href="/dashboard.js"></script>
