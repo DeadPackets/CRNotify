@@ -4,6 +4,7 @@ const config = require('./config.json');
 //Lib
 const checkCRN = require('./lib/checkCRN')
 const getUserCRNs = require('./lib/getUserCRNs')
+const removeCRN = require('./lib/removeCRN')
 
 //DB
 const initDB = require('./lib/initDB')
@@ -30,6 +31,15 @@ app.engine('handlebars', exphbs({
       item.forEach(function(msg, i) {
         final = '<div class="animated fadeIn notification is-success">' + msg + '</div>'
       })
+      return final;
+    },
+    crnList: function(item) {
+      let final = ''
+
+      item.forEach(function(crn, i){
+        final = final + '<div class="notification is-info">' + JSON.stringify(crn) + '</div>'
+      })
+
       return final;
     }
   }
@@ -229,7 +239,7 @@ app.post('/app/removecrn', function(req, res) {
   }
 
   if (req.body.crn) {
-    removeCRN(req.body.crn, function(err) {
+    removeCRN(req.body.crn, req.user, db, function(err) {
       if (err) {
         req.flash('error_message', err)
         res.redirect('/app/manage')

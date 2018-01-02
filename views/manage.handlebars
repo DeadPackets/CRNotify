@@ -20,8 +20,8 @@
         <span>Info</span>
       </a>
       </li>
-      <li>
-        <a class="is-active">
+      <li class="is-active">
+        <a href="#">
         <span class="icon is-small"><i class="fa fa-sliders"></i></span>
         <span>Manage CRNs</span>
       </a>
@@ -69,7 +69,20 @@
       <button type="submit" class="button is-info">Submit</button>
     </form>
     <hr />
-    
+    <form action="/app/removecrn" method="post">
+      <div class="field">
+        <label class="label">Insert CRN Here:</label>
+        <div class="control has-icons-right">
+          <input class="input" type="text" name="crn" placeholder="Some random CRN (eg: 22666)">
+          <span class="icon is-small is-right">
+                <i class="fa fa-id-card"></i>
+            </span>
+        </div>
+      </div>
+      <button type="submit" class="button is-info">Submit</button>
+    </form>
+    <hr />
+    {{{crnList crnData}}}
   </div>
 </div>
 
