@@ -5,6 +5,7 @@ const config = require('./config.json');
 const checkCRN = require('./lib/checkCRN')
 const getUserCRNs = require('./lib/getUserCRNs')
 const removeCRN = require('./lib/removeCRN')
+const changeSettings = require('./lib/changeSettings')
 
 //DB
 const initDB = require('./lib/initDB')
@@ -36,7 +37,7 @@ app.engine('handlebars', exphbs({
     crnList: function(item) {
       let final = ''
 
-      item.forEach(function(crn, i){
+      item.forEach(function(crn, i) {
         final = final + '<div class="notification is-info">' + JSON.stringify(crn) + '</div>'
       })
 
@@ -184,7 +185,7 @@ app.get('/app/dashboard', function(req, res) {
 app.get('/app/manage', function(req, res) {
 
   //Fetch the user's subscribed CRNs
-  getUserCRNs(req.user, db, function(err, data){
+  getUserCRNs(req.user, db, function(err, data) {
     res.render('manage', {
       path: 'Manage',
       error_messages: req.flash('error_message'),
@@ -196,7 +197,18 @@ app.get('/app/manage', function(req, res) {
 })
 
 app.get('/app/settings', function(req, res) {
-  res.send('settings')
+  getUserSettings(req.user, db, functioN(err, data) {
+    if (err) {
+      req.flash('error_message', err)
+    } else {
+      res.render('settings', {
+        path: 'Settings',
+        error_messages: req.flash('error_message'),
+        success_messages: req.flash('success_message'),
+        settingsData: data
+      })
+    }
+  })
 })
 
 app.get('/app/logout', function(req, res) {
@@ -248,6 +260,28 @@ app.post('/app/removecrn', function(req, res) {
         res.redirect('/app/manage')
       }
     })
+  } else {
+    res.redirect('/error_400')
+  }
+})
+
+app.post('/app/changeSettings', function(req, res) {
+  if (!req.body) {
+    res.redirect('/error_400')
+  }
+
+  if (req.body.ifttt_key && req.body.ifttt_enabled) {
+    changeSettings(req.body, req.user, db, function(err) {
+      if (err) {
+        req.flash('error_message', err)
+        res.redirect('/app/settings')
+      } else {
+        req.flash('success_message', 'Successfully changed settings. Try sending a test notification.')
+        res.redirect('/app/settingss')
+      }
+    })
+  } else {
+    res.redirect('/error_400')
   }
 })
 
