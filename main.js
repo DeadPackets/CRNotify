@@ -197,7 +197,7 @@ app.get('/app/manage', function(req, res) {
 })
 
 app.get('/app/settings', function(req, res) {
-  getUserSettings(req.user, db, functioN(err, data) {
+  getUserSettings(req.user, db, function(err, data) {
     if (err) {
       req.flash('error_message', err)
     } else {
@@ -300,3 +300,10 @@ app.use(function(req, res) {
 
 //HTTP Server init
 app.listen(config.webserver.HTTP_PORT, 'localhost')
+
+//WHERE THE MAGIC HAPPENS
+const crawlCRNS = require('./lib/crawlCRNS')
+
+setInterval(function(){
+  crawlCRNS(db)
+}, 10000)
