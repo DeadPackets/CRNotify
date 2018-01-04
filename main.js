@@ -64,7 +64,7 @@ app.set('view engine', 'handlebars');
 
 //HTTP Logger
 const morgan = require('morgan');
-app.use(morgan('combined'));
+app.use(morgan('short'));
 
 //Cookies
 const expressSession = require('express-session');
@@ -307,7 +307,7 @@ app.post('/app/changeSettings', function(req, res) {
 
 //Error 400
 app.get('/error_400', function(req, res) {
-  res.render('error_400', {path: 'Error'})
+  res.status(400).render('error_400', {path: 'Error'})
 })
 
 //404
