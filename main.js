@@ -159,8 +159,16 @@ app.get('/stats', function(req, res) {
 })
 
 app.get('/', function(req, res) {
-  if (req.isAuthenticated()) {
-    res.redirect('/app')
+  if (config.misc.enabled) {
+    if (req.isAuthenticated()) {
+      res.redirect('/app')
+    } else {
+      res.render('home', {
+        path: 'Welcome',
+        error_messages: req.flash('error_message'),
+        success_messages: req.flash('success_message')
+      })
+    }
   } else {
     res.render('home', {
       path: 'Welcome',
@@ -327,7 +335,6 @@ if (config.misc.enabled) {
     })
   })
 }
-
 
 //HTTP Server init
 app.listen(config.webserver.HTTP_PORT, 'localhost')
