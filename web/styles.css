@@ -1,18 +1,26 @@
+html {
+  min-height: 100%;
+  height: 100%;
+}
+
 body {
   font-family: 'Open Sans', sans-serif;
+  height: 100%;
 }
 
 @media (min-width: 576px) {
   .mainTitle {
     font-size: 2.5em;
   }
-
   .mainParagraph {
     font-size: 1em;
   }
-
   .dashboardTitle {
-    font-size: 1.5em
+    font-size: 1.5em;
+  }
+
+  .alert {
+    width: 100%;
   }
 
 }
@@ -21,28 +29,29 @@ body {
   .mainTitle {
     font-size: 5em;
   }
-
   .dashboardTitle {
     font-size: 1.5em;
   }
-
   .dashboardTitle {
-    font-size: 2em
+    font-size: 2em;
   }
-
+  .alert {
+    width: 100%;
+  }
 }
 
 @media (min-width: 992px) {
   .mainTitle {
     font-size: 7.5em;
   }
-
   .mainParagraph {
     font-size: 1.5em;
   }
-
   .dashboardTitle {
-    font-size: 3em
+    font-size: 3em;
+  }
+  .alert {
+    width: 50%;
   }
 }
 
@@ -50,13 +59,14 @@ body {
   .mainTitle {
     font-size: 8em;
   }
-
   .mainParagraph {
     font-size: 1.5em;
   }
-
   .dashboardTitle {
-    font-size: 3em
+    font-size: 3em;
+  }
+  .alert {
+    width: 40%;
   }
 }
 
@@ -88,4 +98,20 @@ dashboardTitle {
 
 #logout {
   color: rgb(233, 44, 44);
+}
+
+customFooter {
+  color: #666;
+  background: #222;
+  position: fixed;
+  bottom: 0px;
+  padding: 17px 0 18px 0;
+  border-top: 1px solid #000;
+  text-align: center;
+  width: 100%;
+  bottom: 0px;
+}
+
+.socialBadge {
+  color: #6b6b6b;
 }

@@ -23,7 +23,7 @@ app.engine('handlebars', exphbs({
     errorMessages: function(item) {
       let final = ''
       item.forEach(function(msg, i) {
-        final = `<div class="alert alert-danger alert-dismissible fade show w-30" role="alert">${msg}
+        final = `<div class="alert alert-danger alert-dismissible fade show" role="alert">${msg}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span></button></div>`
       })
@@ -32,7 +32,7 @@ app.engine('handlebars', exphbs({
     successMessages: function(item) {
       let final = ''
       item.forEach(function(msg, i) {
-        final = `<div class="alert alert-success alert-dismissible fade show w-30" role="alert">${msg}
+        final = `<div class="alert alert-success alert-dismissible fade show" role="alert">${msg}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span></button></div>`
       })
@@ -174,6 +174,19 @@ app.get('/', function(req, res) {
       success_messages: req.flash('success_message')
     })
   }
+})
+
+
+//General stuff
+app.get('/faq', function(req, res){
+  res.render('faq', {
+    path: "FAQ"
+  })
+})
+
+
+app.get('/stats', function(req, res){
+  res.send('soon')
 })
 
 //Anything under /app must only be accessed by a user who is logged in
