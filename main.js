@@ -6,6 +6,7 @@ const checkCRN = require('./lib/checkCRN')
 const getUserCRNs = require('./lib/getUserCRNs')
 const removeCRN = require('./lib/removeCRN')
 const changeSettings = require('./lib/changeSettings')
+const sendWelcomeEmail = require('./lib/sendWelcomeEmail')
 
 //DB
 const initDB = require('./lib/initDB')
@@ -23,18 +24,18 @@ app.engine('handlebars', exphbs({
     errorMessages: function(item) {
       let final = ''
       item.forEach(function(msg, i) {
-        final = `<div class="alert alert-danger alert-dismissible fade show" role="alert">${msg}
+        final = `<center><div class="alert alert-danger alert-dismissible fade show" role="alert">${msg}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span></button></div>`
+        <span aria-hidden="true">&times;</span></button></div></center>`
       })
       return final;
     },
     successMessages: function(item) {
       let final = ''
       item.forEach(function(msg, i) {
-        final = `<div class="alert alert-success alert-dismissible fade show" role="alert">${msg}
+        final = `<center><div class="alert alert-success alert-dismissible fade show" role="alert">${msg}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span></button></div>`
+        <span aria-hidden="true">&times;</span></button></div></center>`
       })
       return final;
     },
@@ -101,12 +102,11 @@ const flash = require('connect-flash');
 app.use(flash());
 
 //Some optimizations
-//app.enable('view cache');
+app.enable('view cache');
 app.disable('x-powered-by')
 app.disable('etag')
 
 //Passport
-
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
@@ -137,6 +137,7 @@ passport.use(new GoogleStrategy({
     } else {
       //Insert new user in DB
       db.Users.create({googleID: profile.id, token: accessToken, email: profile.emails[0].value, name: profile.displayName}).then(user => {
+        sendWelcomeEmail(user.dataValues)
         return done(null, user.dataValues)
       })
     }
