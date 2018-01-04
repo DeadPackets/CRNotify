@@ -8,6 +8,10 @@ const removeCRN = require('./lib/removeCRN')
 const changeSettings = require('./lib/changeSettings')
 const sendWelcomeEmail = require('./lib/sendWelcomeEmail')
 
+//Tor stuff
+const { connect, disconnect, tor } = require('node-tor-control');
+const connection = connect({ password: '' });
+
 //DB
 const initDB = require('./lib/initDB')
 const db = initDB()
@@ -327,3 +331,8 @@ const crawlCRNS = require('./lib/crawlCRNS')
 setInterval(function() {
   crawlCRNS(db)
 }, config.misc.scrapeDelay)
+
+//Change Tor every 5 minutes
+setInterval(function(){
+  tor.signalNewNYM(connection);
+}, 300000)
