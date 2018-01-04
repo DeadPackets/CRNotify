@@ -332,7 +332,7 @@ setInterval(function() {
   crawlCRNS(db)
 }, config.misc.scrapeDelay)
 
-//Change Tor every 5 minutes
+//Change Tor every 15 minutes
 setInterval(function(){
   tor.signalNewNYM(connection);
-}, 300000)
+}, 900000)
