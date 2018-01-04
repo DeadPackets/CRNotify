@@ -8,6 +8,9 @@ const removeCRN = require('./lib/removeCRN')
 const changeSettings = require('./lib/changeSettings')
 const sendWelcomeEmail = require('./lib/sendWelcomeEmail')
 
+//i like colors
+const chalk = require('chalk')
+
 //Tor stuff
 const TorControl = require('tor-control');
 const control = new TorControl({password: '', persistent: true});
