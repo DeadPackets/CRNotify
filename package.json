@@ -36,6 +36,7 @@
     "passport-google-oauth20": "^1.0.0",
     "phantomjs": "^2.1.7",
     "request": "^2.83.0",
-    "sequelize": "^4.27.0"
+    "sequelize": "^4.27.0",
+    "tor-control": "0.0.1"
   }
 }

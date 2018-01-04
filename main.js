@@ -9,8 +9,8 @@ const changeSettings = require('./lib/changeSettings')
 const sendWelcomeEmail = require('./lib/sendWelcomeEmail')
 
 //Tor stuff
-const { connect, disconnect, tor } = require('node-tor-control');
-const connection = connect({ password: '' });
+const TorControl = require('tor-control');
+const control = new TorControl({password: '', persistent: true});
 
 //DB
 const initDB = require('./lib/initDB')
@@ -182,16 +182,12 @@ app.get('/', function(req, res) {
   }
 })
 
-
 //General stuff
-app.get('/faq', function(req, res){
-  res.render('faq', {
-    path: "FAQ"
-  })
+app.get('/faq', function(req, res) {
+  res.render('faq', {path: "FAQ"})
 })
 
-
-app.get('/stats', function(req, res){
+app.get('/stats', function(req, res) {
   res.send('soon')
 })
 
@@ -333,6 +329,11 @@ setInterval(function() {
 }, config.misc.scrapeDelay)
 
 //Change Tor every 15 minutes
-setInterval(function(){
-  tor.signalNewNYM(connection);
+setInterval(function() {
+  control.signalNewnym(function(err, status) {
+    if (err) {
+      console.log(err)
+    }
+    console.log('Changed IP.');
+  });
 }, 120000)
