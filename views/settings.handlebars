@@ -1,43 +1,47 @@
 <div id="app">
 
-  <div class="animated fadeInDown">
+  <div class="animated fadeInDown text-center">
     <h1 class="mainTitle">
       CRNotify
     </h1>
   </div>
 
-  <div class="animated fadeInDown">
-    <h1 class="dashboardTitle">Welcome, {{{user.name}}}</h1>
+  <div class="animated fadeInDown text-center">
+    <h3 class="dashboardTitle">Welcome, {{{user.name}}}</h3>
   </div>
 
   {{{errorMessages error_messages}}} {{{successMessages success_messages}}}
 
-  <div class="tabs is-large is-centered is-boxed">
-    <ul>
-      <li>
-        <a href="/app/dashboard">
+  <div style="padding-top: 20px;">
+    <ul class="nav nav-tabs justify-content-center">
+      <li class="nav-item">
+        <a class="nav-link" href="/app/dashboard">
         <span class="icon is-small"><i class="fa fa-info-circle"></i></span>
         <span>Info</span>
       </a>
       </li>
-      <li>
-        <a href="/app/manage">
+      <li class="nav-item">
+        <a class="nav-link" href="/app/manage">
         <span class="icon is-small"><i class="fa fa-sliders"></i></span>
-        <span>Manage CRNs</span>
+        <span>Manage</span>
       </a>
       </li>
-      <li class="is-active">
-        <a href="#">
+      <li class="nav-item">
+        <a class="nav-link active" href="#">
         <span class="icon is-small"><i class="fa fa-cogs"></i></span>
         <span>Settings</span>
       </a>
+        </a>
       </li>
-      <li>
-        <a id="logout" href='/app/logout'>
+      <li class="nav-item">
+        <a class="nav-link" href="/app/logout">
         <span id="logout" class="icon is-small"><i class="fa fa-sign-out"></i></span>
         <span id="logout">Log Out</span>
       </a>
       </li>
     </ul>
   </div>
+
+  <h2 class='text-center'>Soon.</h2>
+
 </div>

@@ -1,40 +1,40 @@
-<div id="app">
+<div id="app" class="container">
 
-  <div class="animated fadeInDown">
-    <h1 class="mainTitle">
+  <div class="animated fadeInDown text-center">
+    <h1 class="display-4 mainTitle">
       CRNotify
     </h1>
   </div>
 
-  <div class="animated fadeInDown">
-    <h1 class="dashboardTitle">Welcome, {{{user.name}}}</h1>
+  <div class="animated fadeInDown text-center">
+    <h3 class="dashboardTitle">Welcome, {{{user.name}}}</h3>
   </div>
 
-  {{{errorMessages error_messages}}}
-  {{{successMessages success_messages}}}
+  {{{errorMessages error_messages}}} {{{successMessages success_messages}}}
 
-  <div class="tabs is-large is-centered is-boxed">
-    <ul>
-      <li class="is-active">
-        <a href="#">
+  <div style="padding-top: 20px;">
+    <ul class="nav nav-tabs justify-content-center">
+      <li class="nav-item">
+        <a class="nav-link active" href="#">
         <span class="icon is-small"><i class="fa fa-info-circle"></i></span>
         <span>Info</span>
       </a>
       </li>
-      <li>
-        <a href="/app/manage">
+      <li class="nav-item">
+        <a class="nav-link" href="/app/manage">
         <span class="icon is-small"><i class="fa fa-sliders"></i></span>
-        <span>Manage CRNs</span>
+        <span>Manage</span>
       </a>
       </li>
-      <li>
-        <a href="/app/settings">
+      <li class="nav-item">
+        <a class="nav-link" href="/app/settings">
         <span class="icon is-small"><i class="fa fa-cogs"></i></span>
         <span>Settings</span>
       </a>
+        </a>
       </li>
-      <li>
-        <a id="logout" href='/app/logout'>
+      <li class="nav-item">
+        <a class="nav-link" href="/app/logout">
         <span id="logout" class="icon is-small"><i class="fa fa-sign-out"></i></span>
         <span id="logout">Log Out</span>
       </a>
@@ -42,11 +42,36 @@
     </ul>
   </div>
 
-  <div class="is-centered is-boxed">
-    <h1>Name: {{{user.name}}}</h1>
-    <h1>User ID: {{{user.id}}}</h1>
-    <h1>Google ID: {{{user.googleID}}}</h1>
-    <h1>Email: {{{user.email}}}</h1>
-    <h1>Account Created Date: {{{user.createdAt}}}</h1>
+  <div class="container h-100" style="padding-top: 30px;">
+    <table class="table align-items-center">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Name</th>
+          <td>{{{user.name}}}</td>
+        </tr>
+        <tr>
+          <th scope="row">User ID</th>
+          <td>{{{user.id}}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Google ID</th>
+          <td>{{{user.googleID}}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Email</th>
+          <td>{{{user.email}}}</td>
+        </tr>
+        <tr>
+          <th scope="row">Date Created</th>
+          <td>{{{user.createdAt}}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

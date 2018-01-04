@@ -23,14 +23,18 @@ app.engine('handlebars', exphbs({
     errorMessages: function(item) {
       let final = ''
       item.forEach(function(msg, i) {
-        final = '<div class="animated fadeIn notification is-danger">' + msg + '</div>'
+        final = `<div class="alert alert-danger alert-dismissible fade show w-30" role="alert">${msg}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span></button></div>`
       })
       return final;
     },
     successMessages: function(item) {
       let final = ''
       item.forEach(function(msg, i) {
-        final = '<div class="animated fadeIn notification is-success">' + msg + '</div>'
+        final = `<div class="alert alert-success alert-dismissible fade show w-30" role="alert">${msg}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span></button></div>`
       })
       return final;
     },
@@ -38,7 +42,16 @@ app.engine('handlebars', exphbs({
       let final = ''
 
       item.forEach(function(crn, i) {
-        final = final + '<div class="notification is-info">' + JSON.stringify(crn) + '</div>'
+        final = `<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">${crn.crn} [${crn.className}]</h5>
+    <h6 class="card-subtitle mb-2 text-muted">${crn.name}</h6>
+    <p class="card-text">This class is currently ${crn.state.toUpperCase()}</p>
+    <form action="/app/removeCRN" method="post">
+        <button type="submit" class="btn btn-danger" name="crn" value="${crn.crn}">Remove</button>
+    </form>
+  </div>
+</div>`
       })
 
       return final;
@@ -58,9 +71,7 @@ const SequelizeStore = require('connect-session-sequelize')(expressSession.Store
 const cookieParser = require('cookie-parser')
 
 app.use(expressSession({
-  secret: config.webserver.cookieSecret,
-  httpOnly: true,
-  proxy: true,
+  secret: config.webserver.cookieSecret, httpOnly: true, proxy: true, maxAge: 7200000, //2 hours
   resave: false,
   store: new SequelizeStore({db: db.sequelize}),
   saveUninitialized: true,
@@ -197,17 +208,11 @@ app.get('/app/manage', function(req, res) {
 })
 
 app.get('/app/settings', function(req, res) {
-  getUserSettings(req.user, db, function(err, data) {
-    if (err) {
-      req.flash('error_message', err)
-    } else {
-      res.render('settings', {
-        path: 'Settings',
-        error_messages: req.flash('error_message'),
-        success_messages: req.flash('success_message'),
-        settingsData: data
-      })
-    }
+  res.render('settings', {
+    path: 'Settings',
+    error_messages: req.flash('error_message'),
+    success_messages: req.flash('success_message'),
+    settingsData: req.user
   })
 })
 
@@ -304,6 +309,6 @@ app.listen(config.webserver.HTTP_PORT, 'localhost')
 //WHERE THE MAGIC HAPPENS
 const crawlCRNS = require('./lib/crawlCRNS')
 
-setInterval(function(){
+setInterval(function() {
   crawlCRNS(db)
-}, 10000)
+}, config.misc.scrapeDelay)

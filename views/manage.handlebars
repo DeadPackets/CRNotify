@@ -1,39 +1,40 @@
 <div id="app">
 
-  <div class="animated fadeInDown">
+  <div class="animated fadeInDown text-center">
     <h1 class="mainTitle">
       CRNotify
     </h1>
   </div>
 
-  <div class="animated fadeInDown">
-    <h1 class="dashboardTitle">Welcome, {{{user.name}}}</h1>
+  <div class="animated fadeInDown text-center">
+    <h3 class="dashboardTitle">Welcome, {{{user.name}}}</h3>
   </div>
 
   {{{errorMessages error_messages}}} {{{successMessages success_messages}}}
 
-  <div class="tabs is-large is-centered is-boxed">
-    <ul>
-      <li>
-        <a href="/app/dashboard">
+  <div style="padding-top: 20px;">
+    <ul class="nav nav-tabs justify-content-center">
+      <li class="nav-item">
+        <a class="nav-link" href="/app/dashboard">
         <span class="icon is-small"><i class="fa fa-info-circle"></i></span>
         <span>Info</span>
       </a>
       </li>
-      <li class="is-active">
-        <a href="#">
+      <li class="nav-item">
+        <a class="nav-link active" href="#">
         <span class="icon is-small"><i class="fa fa-sliders"></i></span>
-        <span>Manage CRNs</span>
+        <span>Manage</span>
       </a>
       </li>
-      <li>
-        <a href="/app/settings">
+      <li class="nav-item">
+        <a class="nav-link" href="/app/settings">
         <span class="icon is-small"><i class="fa fa-cogs"></i></span>
         <span>Settings</span>
       </a>
+        </a>
       </li>
-      <li>
-        <a id="logout" href='/app/logout'>
+      <li class="nav-item">
+        <a class="nav-link" href="/app/logout">
         <span id="logout" class="icon is-small"><i class="fa fa-sign-out"></i></span>
         <span id="logout">Log Out</span>
       </a>
@@ -41,35 +42,27 @@
     </ul>
   </div>
 
-  <div class="animated fadeInUp is-fullwidth">
+  <div class="animated fadeInUp container w-100" style="padding-top: 20px;">
+
     <h1 style="font-size: 32px; padding-bottom: 20px;">Want to add a new CRN?</h1>
-
     <form action="/app/addcrn" method="post">
-      <div class="field">
-        <label class="label">Insert CRN Here:</label>
-        <div class="control has-icons-right">
-          <input class="input" type="text" name="crn" placeholder="Some random CRN (eg: 22666)">
-          <span class="icon is-small is-right">
-                <i class="fa fa-id-card"></i>
-            </span>
-        </div>
+      <div class="form-group">
+        <label for="crn">CRN</label>
+        <input name="crn" type="text" class="form-control" id="crn"  placeholder="Enter CRN">
+        <small id="emailHelp" class="form-text text-muted">Just insert the CRN here.</small>
       </div>
+      <div class="form-group">
+        <label for="crnState">Current State</label>
+        <select name="currentStatus" id="inputState" class="form-control">
+          <option>Open</option>
+          <option>Closed</option>
+        </select>
+        <small id="crnStatusTrust" class="form-text text-muted">Please check before putting this, I'm trusting you.</small>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
-      <div class="field">
-        <label class="label">Current status of CRN:</label>
-        <div class="control has-icons-right">
-          <div class="select">
-            <select name="currentStatus">
-              <option>Closed</option>
-              <option>Open</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <button type="submit" class="button is-info">Submit</button>
-    </form>
-    <hr />
-    <form action="/app/removecrn" method="post">
+    <!-- <form action="/app/removecrn" method="post">
       <div class="field">
         <label class="label">Insert CRN Here:</label>
         <div class="control has-icons-right">
@@ -80,7 +73,8 @@
         </div>
       </div>
       <button type="submit" class="button is-info">Submit</button>
-    </form>
+    </form> -->
+
     <hr />
     {{{crnList crnData}}}
   </div>
