@@ -318,12 +318,16 @@ app.post('/app/changeSettings', function(req, res) {
 })
 
 //404
-app.use(function(req, res) {
-  res.render('error_404', {
-    url: req.url,
-    path: 'Not Found'
+
+if (config.misc.enabled) {
+  app.use(function(req, res) {
+    res.render('error_404', {
+      url: req.url,
+      path: 'Not Found'
+    })
   })
-})
+}
+
 
 //HTTP Server init
 app.listen(config.webserver.HTTP_PORT, 'localhost')
