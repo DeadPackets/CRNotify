@@ -335,4 +335,4 @@ setInterval(function() {
 //Change Tor every 15 minutes
 setInterval(function(){
   tor.signalNewNYM(connection);
-}, 900000)
+}, 120000)
