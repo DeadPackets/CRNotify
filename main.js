@@ -351,9 +351,9 @@ if (config.misc.enabled) {
   setInterval(function() {
     control.signalNewnym(function(err, status) {
       if (err) {
-        console.log(err)
+        console.log(chalk.red(err))
       }
-      console.log('Changed IP.');
+      console.log(chalk.blue('Changed IP.'));
     });
   }, 120000)
 }
