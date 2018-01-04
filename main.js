@@ -149,6 +149,40 @@ passport.use(new GoogleStrategy({
   })
 }))
 
+//General stuff
+app.get('/faq', function(req, res) {
+  res.render('faq', {path: "FAQ"})
+})
+
+app.get('/stats', function(req, res) {
+  res.send('soon')
+})
+
+app.get('/', function(req, res) {
+  if (req.isAuthenticated()) {
+    res.redirect('/app')
+  } else {
+    res.render('home', {
+      path: 'Welcome',
+      error_messages: req.flash('error_message'),
+      success_messages: req.flash('success_message')
+    })
+  }
+})
+
+//Error 400
+app.get('/error_400', function(req, res) {
+  res.status(400).render('error_400', {path: 'Error'})
+})
+
+app.use(function(req, res, next) {
+  if (config.misc.enabled) {
+    next()
+  } else {
+    res.redirect('/', req.flash("error_message", "I'm sorry, but CRNotify is disabled until the next registration period"))
+  }
+})
+
 //Auth HTTP
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
@@ -168,28 +202,6 @@ app.get('/auth/callback', passport.authenticate('google', {
   failureRedirect: '/',
   failureFlash: true
 }))
-
-//HTTP
-app.get('/', function(req, res) {
-  if (req.isAuthenticated()) {
-    res.redirect('/app')
-  } else {
-    res.render('home', {
-      path: 'Welcome',
-      error_messages: req.flash('error_message'),
-      success_messages: req.flash('success_message')
-    })
-  }
-})
-
-//General stuff
-app.get('/faq', function(req, res) {
-  res.render('faq', {path: "FAQ"})
-})
-
-app.get('/stats', function(req, res) {
-  res.send('soon')
-})
 
 //Anything under /app must only be accessed by a user who is logged in
 app.use('/app', isLoggedIn)
@@ -305,11 +317,6 @@ app.post('/app/changeSettings', function(req, res) {
   }
 })
 
-//Error 400
-app.get('/error_400', function(req, res) {
-  res.status(400).render('error_400', {path: 'Error'})
-})
-
 //404
 app.use(function(req, res) {
   res.render('error_404', {
@@ -324,16 +331,18 @@ app.listen(config.webserver.HTTP_PORT, 'localhost')
 //WHERE THE MAGIC HAPPENS
 const crawlCRNS = require('./lib/crawlCRNS')
 
-setInterval(function() {
-  crawlCRNS(db)
-}, config.misc.scrapeDelay)
+if (config.mis.enabled) {
+  setInterval(function() {
+    crawlCRNS(db)
+  }, config.misc.scrapeDelay)
 
-//Change Tor every 15 minutes
-setInterval(function() {
-  control.signalNewnym(function(err, status) {
-    if (err) {
-      console.log(err)
-    }
-    console.log('Changed IP.');
-  });
-}, 120000)
+  //Change Tor every 15 minutes
+  setInterval(function() {
+    control.signalNewnym(function(err, status) {
+      if (err) {
+        console.log(err)
+      }
+      console.log('Changed IP.');
+    });
+  }, 120000)
+}
