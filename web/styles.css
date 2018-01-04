@@ -1,11 +1,16 @@
-html {
-  min-height: 100%;
+html, body {
   height: 100%;
 }
 
 body {
   font-family: 'Open Sans', sans-serif;
-  height: 100%;
+}
+
+#wrapper {
+  min-height: 100%;
+  height: auto !important;
+  margin: 0 auto -120px; /* the bottom margin is the negative value of the footer's height */
+  padding-bottom: 30px;
 }
 
 @media (min-width: 576px) {
@@ -18,11 +23,9 @@ body {
   .dashboardTitle {
     font-size: 1.5em;
   }
-
   .alert {
     width: 100%;
   }
-
 }
 
 @media (min-width: 768px) {
@@ -70,12 +73,6 @@ body {
   }
 }
 
-#main {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-
 .mainTitle {
   padding-top: 20px;
   color: transparent;
@@ -100,18 +97,24 @@ dashboardTitle {
   color: rgb(233, 44, 44);
 }
 
-customFooter {
-  color: #666;
-  background: #222;
-  position: fixed;
-  bottom: 0px;
-  padding: 17px 0 18px 0;
-  border-top: 1px solid #000;
-  text-align: center;
+.footer, .push {
+  height: 120px;
   width: 100%;
-  bottom: 0px;
+}
+
+.footer {
+  padding-top: 20px;
+  bottom: 0;
+  background: #363636;
+}
+
+.footerText {
+  color: #8f8f8f;
+  padding-bottom: 10px;
 }
 
 .socialBadge {
+  padding-top: 10px;
+  padding-bottom: 10px;
   color: #6b6b6b;
 }

@@ -64,7 +64,7 @@ app.set('view engine', 'handlebars');
 
 //HTTP Logger
 const morgan = require('morgan');
-app.use(morgan('dev'));
+app.use(morgan('combined'));
 
 //Cookies
 const expressSession = require('express-session');
