@@ -331,7 +331,7 @@ app.listen(config.webserver.HTTP_PORT, 'localhost')
 //WHERE THE MAGIC HAPPENS
 const crawlCRNS = require('./lib/crawlCRNS')
 
-if (config.mis.enabled) {
+if (config.misc.enabled) {
   setInterval(function() {
     crawlCRNS(db)
   }, config.misc.scrapeDelay)
