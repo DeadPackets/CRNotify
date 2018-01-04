@@ -179,7 +179,8 @@ app.use(function(req, res, next) {
   if (config.misc.enabled) {
     next()
   } else {
-    res.redirect('/', req.flash("error_message", "I'm sorry, but CRNotify is disabled until the next registration period"))
+    req.flash("error_message", "I'm sorry, but CRNotify is disabled until the next registration period")
+    res.redirect('/')
   }
 })
 
@@ -318,10 +319,9 @@ app.post('/app/changeSettings', function(req, res) {
 })
 
 //404
-
 if (config.misc.enabled) {
   app.use(function(req, res) {
-    res.render('error_404', {
+    res.status(404).render('error_404', {
       url: req.url,
       path: 'Not Found'
     })
