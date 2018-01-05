@@ -358,14 +358,14 @@ if (config.misc.enabled) {
     initCrawl()
   }, 10000)
 
-  // //Change Tor every 2 minutes
-  // setInterval(function() {
-  //   control.signalNewnym(function(err, status) {
-  //     if (err) {
-  //       console.log(chalk.red(err))
-  //     }
-  //     console.log(chalk.blue('Changed IP.'));
-  //   });
-  // }, 120000)
+  //Change Tor every 30 seconds
+  setInterval(function() {
+    control.signalNewnym(function(err, status) {
+      if (err) {
+        console.log(chalk.red(err))
+      }
+      console.log(chalk.blue('Changed IP.'));
+    });
+  }, 30000)
 
 }
