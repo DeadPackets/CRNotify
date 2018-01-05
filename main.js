@@ -358,7 +358,7 @@ if (config.misc.enabled) {
     initCrawl()
   }, 10000)
 
-  //Change Tor every 30 seconds
+  //Change Tor every minute
   setInterval(function() {
     control.signalNewnym(function(err, status) {
       if (err) {
@@ -366,6 +366,6 @@ if (config.misc.enabled) {
       }
       console.log(chalk.blue('Changed IP.'));
     });
-  }, 30000)
+  }, 60000)
 
 }
