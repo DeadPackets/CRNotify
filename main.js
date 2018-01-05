@@ -350,8 +350,6 @@ if (config.misc.enabled) {
 
   function initCrawl() {
     crawlCRNS(db, function(){
-      //Wait for 5 seconds for RAM to clear
-      sleep.sleep(10)
       initCrawl()
     })
   }
