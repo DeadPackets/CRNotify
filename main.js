@@ -10,6 +10,7 @@ const sendWelcomeEmail = require('./lib/sendWelcomeEmail')
 
 //i like colors
 const chalk = require('chalk')
+const sleep = require('sleep')
 
 //Tor stuff
 const TorControl = require('tor-control');
@@ -346,11 +347,20 @@ app.listen(config.webserver.HTTP_PORT, 'localhost')
 const crawlCRNS = require('./lib/crawlCRNS')
 
 if (config.misc.enabled) {
-  setInterval(function() {
-    crawlCRNS(db)
-  }, config.misc.scrapeDelay)
 
-  //Change Tor every 15 minutes
+  function initCrawl() {
+    crawlCRNS(db, function(){
+      //Wait for 5 seconds for RAM to clear
+      sleep.sleep(10)
+      initCrawl()
+    })
+  }
+
+  setTimeout(function(){
+    initCrawl()
+  }, 10000)
+
+  //Change Tor every 2 minutes
   setInterval(function() {
     control.signalNewnym(function(err, status) {
       if (err) {

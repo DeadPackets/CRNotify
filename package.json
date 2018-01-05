@@ -38,6 +38,7 @@
     "phantomjs": "^2.1.7",
     "request": "^2.83.0",
     "sequelize": "^4.27.0",
+    "sleep": "^5.1.1",
     "tor-control": "0.0.1"
   }
 }
