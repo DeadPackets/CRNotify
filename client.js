@@ -3,8 +3,8 @@ const config = require('./config.json');
 
 //Socket
 const io = require('socket.io-client');
-const socket = io('https://crnotify.cf')
-//const socket = io('http://localhost:8080/')
+// const socket = io('https://crnotify.cf')
+const socket = io('http://localhost:8080/')
 
 //Requires
 const random_useragent = require('random-useragent');
@@ -47,7 +47,7 @@ function checkCRN(termID, crn, cb) {
     })
     .cookies([])
     .open(`https://banner.aus.edu/axp3b21h/owa/bwckschd.p_disp_detail_sched?term_in=${termID}&crn_in=${crn}`)
-    .catch(function(e) {
+    .catch(function(e){
       console.log(chalk.red(`Error crawling CRN!`))
       cb(true, null)
     })
@@ -87,23 +87,25 @@ function fetchStatus(termID, subject, crns) {
         reject()
       }, reject)
       .post('https://banner.aus.edu/axp3b21h/owa/bwckschd.p_get_crse_unsec', postData)
-      .waitForSelector('.pagebodydiv')
-      .evaluate(function(termID, subject, crns){
-        console.log(termID, subject, crns)
-        // var results = [];
-        // 
-        // crns.forEach(function(crn, index){
-        //   const status = $(`a[href="/axp3b21h/owa/bwckschd.p_disp_detail_sched?term_in=${termID}&crn_in=${crn}"]`).parent().closest('tr').next().find('td[colspan="1"]').text()
-        //   results.push({crn, status})
-        // })
-        //
-        // return results;
-      }, termID, subject, crns)
-      .then(function(results){
-        resolve(results)
+      .wait(5000)
+      .catch(function(e) {
+        reject()
+      }, reject)
+      .evaluate(function(data){
+
+        var array = []
+
+        data.crns.forEach(function(item, i){
+          var a = $('a[href="/axp3b21h/owa/bwckschd.p_disp_detail_sched?term_in='+data.termID+'&crn_in='+item.crn+'"]').closest('tr').next().find('td[colspan="1"]').text()
+          array.push({crn: item, status: a})
+        })
+
+        return array;
+      }, {termID, subject, crns})
+      .then(function(data){
+        resolve(data)
         return horseman.close();
       })
-
   })
 }
 
@@ -115,14 +117,13 @@ socket.on(`checkCRN_${config.misc.secret}`, function(termID, crn, cb) {
 })
 
 socket.on(`crawlCRN_${config.misc.secret}`, function(termID, subject, crns, cb){
+
   console.log(chalk.blue(`Crawling subject ${subject}...`))
 
-  fetchStatus(termID, subject, crns)
-    .then(function(body){
+  fetchStatus(termID, subject, crns).then(function(body){
     cb(false, body)
     console.log(chalk.blue(`Done crawling ${subject}.`))
-  })
-    .catch(function(){
+  }).catch(function(){
     cb(true, null)
     console.log(chalk.blue(`Done crawling ${subject}.`))
   })

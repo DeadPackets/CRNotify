@@ -368,6 +368,6 @@ if (config.misc.enabled) {
 
   setTimeout(function(){
     initCrawl()
-  }, 30000)
+  }, 10000)
 
 }
