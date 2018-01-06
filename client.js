@@ -89,14 +89,15 @@ function fetchStatus(termID, subject, crns) {
       .post('https://banner.aus.edu/axp3b21h/owa/bwckschd.p_get_crse_unsec', postData)
       .waitForSelector('.pagebodydiv')
       .evaluate(function(termID, subject, crns){
-        var results = [];
-
-        crns.forEach(function(crn, index){
-          const status = $(`a[href="/axp3b21h/owa/bwckschd.p_disp_detail_sched?term_in=${termID}&crn_in=${crn}"]`).parent().closest('tr').next().find('td[colspan="1"]').text()
-          results.push({crn, status})
-        })
-
-        return results;
+        console.log(termID, subject, crns)
+        // var results = [];
+        // 
+        // crns.forEach(function(crn, index){
+        //   const status = $(`a[href="/axp3b21h/owa/bwckschd.p_disp_detail_sched?term_in=${termID}&crn_in=${crn}"]`).parent().closest('tr').next().find('td[colspan="1"]').text()
+        //   results.push({crn, status})
+        // })
+        //
+        // return results;
       }, termID, subject, crns)
       .then(function(results){
         resolve(results)
