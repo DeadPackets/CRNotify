@@ -24,6 +24,23 @@ const db = initDB()
 const express = require('express');
 const app = express();
 
+//Socket
+const http = require('http');
+const server = http.createServer(app);
+const io = require('socket.io').listen(server);
+var clientSocket = '';
+
+io.on('connection', function(socket){
+
+  socket.emit('auth')
+
+  socket.on(`${config.misc.secret}`, function(){
+    clientSocket = socket
+    console.log(chalk.green('Our client connected!'))
+  })
+
+})
+
 //Handlebars
 const exphbs = require('express-handlebars');
 app.engine('handlebars', exphbs({
@@ -269,7 +286,7 @@ app.post('/app/addcrn', function(req, res) {
   }
 
   if (req.body.crn && req.body.currentStatus) {
-    checkCRN(req.body.crn, req.body.currentStatus, req.user, db, function(err, isNew) {
+    checkCRN(req.body.crn, req.body.currentStatus, req.user, db, clientSocket, function(err, isNew) {
       if (err) {
         req.flash('error_message', err)
         res.redirect('/app/manage')
@@ -341,7 +358,7 @@ if (config.misc.enabled) {
 }
 
 //HTTP Server init
-app.listen(config.webserver.HTTP_PORT, 'localhost')
+server.listen(config.webserver.HTTP_PORT, 'localhost')
 
 //WHERE THE MAGIC HAPPENS
 const crawlCRNS = require('./lib/crawlCRNS')
@@ -349,14 +366,14 @@ const crawlCRNS = require('./lib/crawlCRNS')
 if (config.misc.enabled) {
 
   function initCrawl() {
-    crawlCRNS(db, function(){
+    crawlCRNS(db, clientSocket, function(){
       initCrawl()
     })
   }
 
   setTimeout(function(){
     initCrawl()
-  }, 10000)
+  }, 30000)
 
   // //Change Tor every minute
   // setInterval(function() {
