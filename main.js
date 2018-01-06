@@ -10,11 +10,6 @@ const sendWelcomeEmail = require('./lib/sendWelcomeEmail')
 
 //i like colors
 const chalk = require('chalk')
-const sleep = require('sleep')
-
-//Tor stuff
-const TorControl = require('tor-control');
-const control = new TorControl({password: '', persistent: true});
 
 //DB
 const initDB = require('./lib/initDB')
@@ -374,15 +369,5 @@ if (config.misc.enabled) {
   setTimeout(function(){
     initCrawl()
   }, 30000)
-
-  // //Change Tor every minute
-  // setInterval(function() {
-  //   control.signalNewnym(function(err, status) {
-  //     if (err) {
-  //       console.log(chalk.red(err))
-  //     }
-  //     console.log(chalk.blue('Changed IP.'));
-  //   });
-  // }, 60000)
 
 }
