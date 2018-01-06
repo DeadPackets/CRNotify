@@ -15,6 +15,10 @@ socket.on('connect', function(){
   console.log(chalk.green('Successfully connected!'))
 })
 
+socket.on('disconnect', function(){
+    console.log(chalk.yellow('Disconnected from socket!'))
+});
+
 //Functions
 function checkCRN(termID, crn, cb) {
 
@@ -99,14 +103,17 @@ function fetchStatus(termID, subject, crns, cb) {
 socket.on(`checkCRN_${config.misc.secret}`, function(termID, crn, cb) {
   console.log(chalk.blue(`Checking CRN ${crn}...`))
   checkCRN(termID, crn, cb)
+  console.log(chalk.blue(`Done checking ${crn}.`))
 })
 
 socket.on(`crawlCRN_${config.misc.secret}`, function(termID, subject, cb){
   console.log(chalk.blue(`Crawling subject ${subject}...`))
   fetchStatus(termID, subject, cb).then(function(body){
     cb(false, body)
+    console.log(chalk.blue(`Done crawling ${subject}.`))
   }).catch(function(){
     cb(true, null)
+    console.log(chalk.blue(`Done crawling ${subject}.`))
   })
 })
 
