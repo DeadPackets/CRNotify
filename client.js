@@ -47,7 +47,7 @@ function checkCRN(termID, crn, cb) {
     })
     .cookies([])
     .open(`https://banner.aus.edu/axp3b21h/owa/bwckschd.p_disp_detail_sched?term_in=${termID}&crn_in=${crn}`)
-    .catch(function(e){
+    .catch(function(e) {
       console.log(chalk.red(`Error crawling CRN!`))
       cb(true, null)
     })
@@ -58,7 +58,7 @@ function checkCRN(termID, crn, cb) {
   })
 }
 
-function fetchStatus(termID, subject, crns, cb) {
+function fetchStatus(termID, subject, crns) {
 
   return new Promise(function(resolve, reject) {
 
@@ -88,14 +88,21 @@ function fetchStatus(termID, subject, crns, cb) {
       }, reject)
       .post('https://banner.aus.edu/axp3b21h/owa/bwckschd.p_get_crse_unsec', postData)
       .waitForSelector('.pagebodydiv')
-      .catch(function(e) {
-        reject()
-      }, reject)
-      .html()
-      .then(function(body){
-        resolve(body)
+      .evaluate(function(termID, subject, crns){
+        var results = [];
+
+        crns.forEach(function(crn, index){
+          const status = $(`a[href="/axp3b21h/owa/bwckschd.p_disp_detail_sched?term_in=${termID}&crn_in=${crn}"]`).parent().closest('tr').next().find('td[colspan="1"]').text()
+          results.push({crn, status})
+        })
+
+        return results;
+      }, termID, subject, crns)
+      .then(function(results){
+        resolve(results)
         return horseman.close();
       })
+
   })
 }
 
@@ -106,15 +113,19 @@ socket.on(`checkCRN_${config.misc.secret}`, function(termID, crn, cb) {
   console.log(chalk.blue(`Done checking ${crn}.`))
 })
 
-socket.on(`crawlCRN_${config.misc.secret}`, function(termID, subject, cb){
+socket.on(`crawlCRN_${config.misc.secret}`, function(termID, subject, crns, cb){
   console.log(chalk.blue(`Crawling subject ${subject}...`))
-  fetchStatus(termID, subject, cb).then(function(body){
+
+  fetchStatus(termID, subject, crns)
+    .then(function(body){
     cb(false, body)
     console.log(chalk.blue(`Done crawling ${subject}.`))
-  }).catch(function(){
+  })
+    .catch(function(){
     cb(true, null)
     console.log(chalk.blue(`Done crawling ${subject}.`))
   })
+
 })
 
 socket.on('auth', function(){
