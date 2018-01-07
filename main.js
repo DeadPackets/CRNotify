@@ -166,6 +166,10 @@ passport.use(new GoogleStrategy({
 }))
 
 //General stuff
+app.get('/donate', function(req, res){
+  res.render('donate', {path: "Donate"})
+})
+
 app.get('/faq', function(req, res) {
   res.render('faq', {path: "FAQ"})
 })
