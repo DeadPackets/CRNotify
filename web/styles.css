@@ -99,6 +99,11 @@ dashboardTitle {
   font-weight: 300;
 }
 
+.donateMessage {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 #logout {
   color: rgb(233, 44, 44);
 }
