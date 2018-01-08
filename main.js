@@ -285,7 +285,7 @@ app.post('/app/addcrn', function(req, res) {
   }
 
   if (req.body.crn && req.body.currentStatus) {
-    checkCRN(req.body.crn, req.body.currentStatus, req.user, db, clientSocket, function(err, isNew) {
+    checkCRN(req.body.crn, req.body.currentStatus, req.user, db, clientSocket, function(err, crnInfo, isNew) {
       if (err) {
         req.flash('error_message', err)
         res.redirect('/app/manage')
@@ -293,8 +293,10 @@ app.post('/app/addcrn', function(req, res) {
 
         //Because why not?
         if (isNew) {
+          console.log(chalk.green(`${req.user.email} added a new CRN! [${crnInfo.crn}] (${crnInfo.className})`))
           req.flash('success_message', 'Successfully added new CRN!')
         } else {
+          console.log(chalk.green(`${req.user.email} subscribed to CRN ${crnInfo.crn} [${crnInfo.className}]!`))
           req.flash('success_message', 'Successfully added CRN!')
         }
 
@@ -317,6 +319,7 @@ app.post('/app/removecrn', function(req, res) {
         req.flash('error_message', err)
         res.redirect('/app/manage')
       } else {
+        console.log(chalk.green(`${req.user.email} removed CRN ${req.body.crn}.`))
         req.flash('success_message', 'Successfully removed CRN.')
         res.redirect('/app/manage')
       }
