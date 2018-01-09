@@ -7,6 +7,7 @@ const getUserCRNs = require('./lib/getUserCRNs')
 const removeCRN = require('./lib/removeCRN')
 const changeSettings = require('./lib/changeSettings')
 const sendWelcomeEmail = require('./lib/sendWelcomeEmail')
+const getStats = require('./lib/getStats')
 
 //i like colors
 const chalk = require('chalk')
@@ -76,6 +77,9 @@ app.engine('handlebars', exphbs({
       })
 
       return final;
+    },
+    json: function(item) {
+      return JSON.stringify(item);
     }
   }
 }));
@@ -122,7 +126,7 @@ const flash = require('connect-flash');
 app.use(flash());
 
 //Some optimizations
-app.enable('view cache');
+//app.enable('view cache');
 app.enable('trust proxy');
 app.disable('x-powered-by')
 app.disable('etag')
@@ -175,7 +179,9 @@ app.get('/faq', function(req, res) {
 })
 
 app.get('/stats', function(req, res) {
-  res.send('soon')
+  getStats(db, function(err, data){
+    res.render('statistics', {path: 'Statistics', data})
+  })
 })
 
 app.get('/', function(req, res) {

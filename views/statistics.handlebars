@@ -1,0 +1,109 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js"></script>
+<div id="main" class="container">
+  <div class="animated fadeInDown text-center">
+    <h1 class="display-4 mainTitle">
+      CRNotify
+    </h1>
+  </div>
+
+  <div class="animated fadeInDown text-center">
+    <h3 class="dashboardTitle" style="padding-bottom: 30px;">Statistics</h3>
+  </div>
+
+  <div class="animated fadeInDown row">
+    <div class="col-sm-6">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Amount of users</h5>
+          <h1 class="card-text">{{{data.countUsers}}}</h1>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Amount of CRNs indexed</h5>
+          <h1 class="card-text">{{{data.countCRNS}}}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+  <hr />
+
+  <div class="animated fadeInDown row">
+    <div class="col-sm-6">
+      <h3 class="text-center">Chart of indexed Classes</h3>
+      <canvas id="classChart"></canvas>
+      <br />
+    </div>
+    <div class="col-sm-6">
+      <h3 class="text-center">Chart of indexed CRNs</h3>
+      <canvas id="crnChart"></canvas>
+    </div>
+  </div>
+
+
+  <script type="text/javascript">
+    const a = {{{json data.topCRNs}}}
+    const b = {{{json data.topSubjects}}}
+    const totalCRNS = {{{data.countCRNS}}}
+    const totalSubjects = {{{data.countSubjects}}}
+
+    const topCRNsValue = a.map(function(item){
+      return item['count(crn)'];
+    })
+
+    const topCRNsName = a.map(function(item){
+      return item.crn;
+    })
+
+    const topClassesValue = b.map(function(item){
+      return item['count(*)'];
+    })
+
+    const topClassesName = b.map(function(item){
+      return item.className;
+    })
+
+    topCRNsValue.push(totalCRNS - topCRNsName.length)
+    topCRNsName.push('Others')
+
+    topClassesValue.push(totalSubjects - topClassesName.length)
+    topClassesName.push('Others')
+
+    const classChart = document.getElementById("classChart").getContext("2d");
+    const crnChartElem = document.getElementById("crnChart").getContext("2d");
+
+    // And for a doughnut chart
+    const classesChart = new Chart(classChart, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: topClassesValue,
+          backgroundColor: randomColor({
+              count: topClassesValue.length,
+              format: 'hex',
+            })
+        }],
+        labels: topClassesName
+      }
+    });
+
+    const crnChart = new Chart(crnChartElem, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: topCRNsValue,
+          backgroundColor: randomColor({
+              count: topClassesValue.length,
+              format: 'hex',
+            })
+        }],
+        labels: topCRNsName
+      }
+    })
+
+  </script>
+</div>
