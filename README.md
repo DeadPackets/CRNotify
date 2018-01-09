@@ -10,7 +10,7 @@ Something that tells AUS students about changes in their desired CRNs. Why? Beca
 - [x] Fix the random errors that Banner makes all of a sudden. (Or build a workaround)
 - [x] A e s t h e t i c s
 - [ ] Support more notifictation methods, maybe integrate IFTTT directly
-- [x] Optimize SQL queries
+- [ ] Optimize SQL queries
 - [x] Stats and FAQ
 - [x] Use bootstrap to fix resposive layout issues
 - [ ] Settings page
