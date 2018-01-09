@@ -367,8 +367,11 @@ const crawlCRNS = require('./lib/crawlCRNS')
 
 if (config.misc.enabled) {
 
+  var lastRun = ''
+
   function initCrawl() {
     crawlCRNS(db, clientSocket, function(){
+      lastRun = new Date()
       initCrawl()
     })
   }
@@ -377,4 +380,17 @@ if (config.misc.enabled) {
     initCrawl()
   }, 10000)
 
+  //Every 5 min
+  setInterval(function(){
+    const now = new Date()
+    const timeDiff = Math.abs(now.getTime() - lastRun.getTime())
+    const secondsDiff = timeDiff / 1000
+
+    //if lastRun > 10 minutes
+    if (secondsDiff > 600) {
+      console.log(chalk.red('Recovered from crash, restarting crawling function!'))
+      initCrawl()
+    }
+
+  }, 300000)
 }
