@@ -126,7 +126,7 @@ const flash = require('connect-flash');
 app.use(flash());
 
 //Some optimizations
-//app.enable('view cache');
+app.enable('view cache');
 app.enable('trust proxy');
 app.disable('x-powered-by')
 app.disable('etag')
