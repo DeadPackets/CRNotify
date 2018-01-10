@@ -9,7 +9,7 @@ body {
 #wrapper {
   min-height: 100%;
   height: auto !important;
-  margin: 0 auto -120px; /* the bottom margin is the negative value of the footer's height */
+  margin: 0 auto -170px; /* the bottom margin is the negative value of the footer's height */
   padding-bottom: 30px;
 }
 
@@ -109,7 +109,7 @@ dashboardTitle {
 }
 
 .footer, .push {
-  height: 120px;
+  height: 170px;
   width: 100%;
 }
 
