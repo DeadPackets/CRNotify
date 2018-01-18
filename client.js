@@ -3,8 +3,7 @@ const config = require('./config.json');
 
 //Socket
 const io = require('socket.io-client');
-const socket = io('https://crnotify.cf')
-// const socket = io('http://localhost:8080/')
+const socket = io(config.misc.socketHost)
 
 //Requires
 const random_useragent = require('random-useragent');

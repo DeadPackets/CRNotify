@@ -8,6 +8,7 @@ const removeCRN = require('./lib/removeCRN')
 const changeSettings = require('./lib/changeSettings')
 const sendWelcomeEmail = require('./lib/sendWelcomeEmail')
 const getStats = require('./lib/getStats')
+const authMobile = require('./lib/authMobile')
 
 //i like colors
 const chalk = require('chalk')
@@ -26,11 +27,11 @@ const server = http.createServer(app);
 const io = require('socket.io').listen(server);
 var clientSocket = '';
 
-io.on('connection', function(socket){
+io.on('connection', function(socket) {
 
   socket.emit('auth')
 
-  socket.on(`${config.misc.secret}`, function(){
+  socket.on(`${config.misc.secret}`, function() {
     clientSocket = socket
     console.log(chalk.green('Our client connected!'))
   })
@@ -170,7 +171,7 @@ passport.use(new GoogleStrategy({
 }))
 
 //General stuff
-app.get('/donate', function(req, res){
+app.get('/donate', function(req, res) {
   res.render('donate', {path: "Donate"})
 })
 
@@ -179,8 +180,11 @@ app.get('/faq', function(req, res) {
 })
 
 app.get('/stats', function(req, res) {
-  getStats(db, function(err, data){
-    res.render('statistics', {path: 'Statistics', data})
+  getStats(db, function(err, data) {
+    res.render('statistics', {
+      path: 'Statistics',
+      data
+    })
   })
 })
 
@@ -209,12 +213,20 @@ app.get('/error_400', function(req, res) {
   res.status(400).render('error_400', {path: 'Error'})
 })
 
-app.use(function(req, res, next) {
+app.use('/app', function(req, res, next) {
   if (config.misc.enabled) {
     next()
   } else {
     req.flash("error_message", "I'm sorry, but CRNotify is disabled until the next registration period")
     res.redirect('/')
+  }
+})
+
+app.use('/mobile_api', function(req, res, next) {
+  if (config.misc.enabled) {
+    next()
+  } else {
+    res.json({success: false, error: 'crnotify_disabled'})
   }
 })
 
@@ -228,18 +240,51 @@ function isLoggedIn(req, res, next) {
   }
 }
 
+function isLoggedInMobile(req, res, next) {
+  if (req.query.token) {
+    authMobile(req.query.token, db, function(err, data) {
+      if (err) {
+        res.json({success: false, error: err})
+      } else {
+        req.user = data
+        next()
+      }
+    })
+  } else {
+    res.json({success: false, error: 'Invalid Parameters.'})
+  }
+}
+
 app.get('/auth', passport.authenticate('google', {
   scope: ['profile', 'email']
 }))
 
+function addCookie(req, res, next) {
+  req.session.authType = 'mobile'
+  next()
+}
+
+app.get('/auth/mobile', addCookie, passport.authenticate('google', {
+  scope: [
+    'profile', 'email'
+  ],
+  callbackURL: config.oauth.callbackURL
+}))
+
 app.get('/auth/callback', passport.authenticate('google', {
-  successRedirect: '/app/dashboard',
   failureRedirect: '/',
   failureFlash: true
-}))
+}), function(req, res) {
+  if (req.session.authType == 'mobile') {
+    res.redirect('CRNotify://login?user=' + JSON.stringify(req.user))
+  } else {
+    res.redirect('/app/dashboard')
+  }
+})
 
 //Anything under /app must only be accessed by a user who is logged in
 app.use('/app', isLoggedIn)
+app.use('/mobile_api/', isLoggedInMobile)
 
 app.get('/app', function(req, res) {
   res.redirect('/app/dashboard')
@@ -355,15 +400,56 @@ app.post('/app/changeSettings', function(req, res) {
   }
 })
 
-//404
-if (config.misc.enabled) {
-  app.use(function(req, res) {
-    res.status(404).render('error_404', {
-      url: req.url,
-      path: 'Not Found'
-    })
+//API
+app.get('/status', function(req, res) {
+  res.json({enabled: config.misc.enabled})
+})
+
+app.post('/mobile_api/getCRNs', function(req, res) {
+  getUserCRNs(req.user, db, function(err, data) {
+    if (err) {
+      res.json({success: false, error: err})
+    } else {
+      res.json({success: true, data: data})
+    }
   })
-}
+})
+
+app.post('/mobile_api/removeCRN', function(req, res) {
+  if (req.query.crn) {
+    removeCRN(req.query.crn, req.user, db, function(err) {
+      if (err) {
+        res.json({success: false, error: err})
+      } else {
+        res.json({success: true})
+      }
+    })
+  } else {
+    res.json({success: false, error: 'Invalid Parameters.'})
+  }
+})
+
+app.post('/mobile_api/addCRN', function(req, res) {
+  if (req.query.crn && req.query.state) {
+    checkCRN(req.query.crn, req.query.state, req.user, db, clientSocket, function(err, crnInfo, isNew) {
+      if (err) {
+        res.json({success: false, error: err})
+      } else {
+        res.json({success: true, data: crnInfo, new: isNew})
+      }
+    })
+  } else {
+    res.json({success: false, error: 'Invalid Parameters.'})
+  }
+})
+
+//404
+app.use(function(req, res) {
+  res.status(404).render('error_404', {
+    url: req.url,
+    path: 'Not Found'
+  })
+})
 
 //HTTP Server init
 server.listen(config.webserver.HTTP_PORT, 'localhost')
@@ -373,21 +459,21 @@ const crawlCRNS = require('./lib/crawlCRNS')
 
 if (config.misc.enabled) {
 
-  var lastRun = ''
+  var lastRun = new Date()
 
   function initCrawl() {
-    crawlCRNS(db, clientSocket, function(){
+    crawlCRNS(db, clientSocket, function() {
       lastRun = new Date()
       initCrawl()
     })
   }
 
-  setTimeout(function(){
+  setTimeout(function() {
     initCrawl()
   }, 10000)
 
   //Every 5 min
-  setInterval(function(){
+  setInterval(function() {
     const now = new Date()
     const timeDiff = Math.abs(now.getTime() - lastRun.getTime())
     const secondsDiff = timeDiff / 1000
