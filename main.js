@@ -226,7 +226,7 @@ app.use('/mobile_api', function(req, res, next) {
   if (config.misc.enabled) {
     next()
   } else {
-    res.json({success: false, error: 'crnotify_disabled'})
+    res.json({success: false, error: 'CRNotify is disabled.'})
   }
 })
 
