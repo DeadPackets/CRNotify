@@ -50,9 +50,16 @@ function checkCRN(termID, crn, cb) {
       console.log(chalk.red(`Error crawling CRN!`))
       cb(true, null)
     })
-    .html()
-    .then(function(body) {
-      cb(false, body)
+    .wait(5000)
+    .evaluate(function(){
+      const final = {
+        error: $('.errortext').text(),
+        title: $('.ddlabel').text()
+      }
+      return final;
+    })
+    .then(function(data) {
+      cb(false, data)
       return horseman.close()
   })
 }
