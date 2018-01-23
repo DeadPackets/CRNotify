@@ -22,8 +22,6 @@ if (window.location.pathname !== '/donate') {
       button: "Sure thing!",
       closeOnClickOutside: false,
       closeOnEsc: false
-    }).then(function() {
-      location.reload()
     })
   }
 }
