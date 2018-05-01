@@ -38,9 +38,7 @@
     "random-useragent": "^0.3.1",
     "request": "^2.83.0",
     "sequelize": "^4.27.0",
-    "sleep": "^5.1.1",
     "socket.io": "^2.0.4",
-    "socket.io-client": "^2.0.4",
-    "tor-control": "0.0.1"
+    "socket.io-client": "^2.0.4"
   }
 }
