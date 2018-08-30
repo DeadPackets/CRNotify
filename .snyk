@@ -3,6 +3,12 @@ version: v1.12.0
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
-  'npm:tunnel-agent:20170305':
-    - phantomjs > request > tunnel-agent:
-        patched: '2018-06-26T03:36:56.443Z'
+  'npm:hoek:20180212':
+    - phantomjs > request > hawk > hoek:
+        patched: '2018-06-19T03:34:15.184Z'
+    - phantomjs > request > hawk > boom > hoek:
+        patched: '2018-06-19T03:34:15.184Z'
+    - phantomjs > request > hawk > sntp > hoek:
+        patched: '2018-06-19T03:34:15.184Z'
+    - phantomjs > request > hawk > cryptiles > boom > hoek:
+        patched: '2018-06-19T03:34:15.184Z'
