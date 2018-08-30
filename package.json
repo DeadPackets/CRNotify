@@ -4,7 +4,9 @@
   "description": "Something that tells AUS students about changes in their desired CRNs. ",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -39,6 +41,8 @@
     "request": "^2.83.0",
     "sequelize": "^4.27.0",
     "socket.io": "^2.0.4",
-    "socket.io-client": "^2.0.4"
-  }
+    "socket.io-client": "^2.0.4",
+    "snyk": "^1.85.0"
+  },
+  "snyk": true
 }
