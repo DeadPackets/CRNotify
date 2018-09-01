@@ -1,7 +1,9 @@
+/* eslint-disable require-jsdoc */
+/* eslint-disable no-console */
+/* eslint-disable no-inner-declarations */
+
 //Requires
 const random_useragent = require('random-useragent');
-const chalk = require('chalk');
-const config = require('../config.json');
 const Horseman = require('node-horseman');
 
 const horseman = new Horseman({
@@ -52,13 +54,13 @@ horseman
 	.click('input[type="submit"]')
 	.waitForNextPage()
 	.wait(2000)
-	.evaluate(function() {
-		var list = {}
-		var items = $('#subj_id').children()
+	.evaluate(() => {
+		const list = {};
+		const items = $('#subj_id').children();
 
-		for (var i = 0; i < items.length; i++) {
-			var shortName = $(items[i]).val()
-			var name = $(items[i]).text()
+		for (let i = 0; i < items.length; i++) {
+			const shortName = $(items[i]).val();
+			const name = $(items[i]).text();
 			list[shortName] = name;
 		}
 
@@ -66,4 +68,4 @@ horseman
 	})
 	.then((data) => {
 		console.log(data);
-	})
+	});

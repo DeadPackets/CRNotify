@@ -1,7 +1,10 @@
 #!/usr/bin/env node
+/* eslint-disable require-jsdoc */
+/* eslint-disable no-console */
+/* eslint-disable no-inner-declarations */
 
 //I love this library so damn much
-const cheerio = require('cheerio')
+const cheerio = require('cheerio');
 
 
 //Stolen from banner
@@ -66,32 +69,32 @@ const data = `
 <option value="UPL">Urban Planning</option>
 <option value="VIS">Visual Communication</option>
 <option value="WST">Women Studies</option>
-<option value="WRI">Writing Studies</option>`
+<option value="WRI">Writing Studies</option>`;
 
 
 //Load data
-const $ = cheerio.load(data)
+const $ = cheerio.load(data);
 
 
 //Init json result
-var json = {}
+const json = {};
 
 
 //Loop through every <option> tag
-$('option').each(function(i, item){
+$('option').each((i, item) => {
 
-   //Grab the values we need
-   const key = $(item).text().toLowerCase()
-   const val = $(item).attr('value')
+	//Grab the values we need
+	const key = $(item).text().toLowerCase();
+	const val = $(item).attr('value');
 
 
-   //Append them to the json result
-   json[key] = val;
-})
+	//Append them to the json result
+	json[key] = val;
+});
 
 
 //Output JSON result
-console.log(JSON.stringify(json))
+console.log(JSON.stringify(json));
 
 
 //Boom. The power of Javascript.
