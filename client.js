@@ -30,9 +30,9 @@ function checkCRN(termID, crn, cb) {
 	const Horseman = require('node-horseman');
 	const horseman = new Horseman({
 		// cookiesFile: './cookies.txt',
-		diskCache: true,
-		diskCachePath: './browsercache',
-		timeout: 15000,
+		// diskCache: true,
+		// diskCachePath: './browsercache',
+		timeout: 30000,
 		loadImages: false,
 		// proxyType: 'socks5',
 		// proxy: '127.0.0.1:9050',
@@ -55,7 +55,7 @@ function checkCRN(termID, crn, cb) {
 			console.log(chalk.red(`Error crawling CRN!`));
 			cb(true, null);
 		})
-		.wait(5000)
+		.wait(10000)
 	/* eslint-disable */
     .evaluate(function () {
       const final = {
@@ -81,9 +81,9 @@ function fetchStatus(termID, subject, crns) {
 
 		const Horseman = require('node-horseman');
 		const horseman = new Horseman({
-			diskCache: true,
-			diskCachePath: './browsercache',
-			timeout: 15000,
+			// diskCache: true,
+			// diskCachePath: './browsercache',
+			timeout: 30000,
 			loadImages: false,
 			ignoreSSLErrors: true
 		});
@@ -101,7 +101,7 @@ function fetchStatus(termID, subject, crns) {
 				reject();
 			}, reject)
 			.post('https://banner.aus.edu/axp3b21h/owa/bwckschd.p_get_crse_unsec', postData)
-			.wait(5000)
+			.wait(10000)
 			.catch(() => {
 				reject();
 			}, reject)
@@ -130,8 +130,9 @@ function fetchStatus(termID, subject, crns) {
 		/* eslint-disable require-jsdoc */
 		/* eslint-disable quotes */
 			.then((data) => {
-				resolve(data, horseman);
-			});
+				resolve(data);
+			})
+			.close();
 	}));
 }
 
@@ -146,8 +147,7 @@ socket.on(`crawlCRN_${config.misc.secret}`, (termID, subject, crns, cb) => {
 
 	console.log(chalk.blue(`Crawling subject ${subject}...`));
 
-	fetchStatus(termID, subject, crns).then((body, horseman) => {
-		horseman.close();
+	fetchStatus(termID, subject, crns).then((body) => {
 		cb(false, body);
 		console.log(chalk.blue(`Done crawling ${subject}.`));
 	}).catch(() => {
