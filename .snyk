@@ -12,3 +12,6 @@ patch:
         patched: '2018-06-19T03:34:15.184Z'
     - phantomjs > request > hawk > cryptiles > boom > hoek:
         patched: '2018-06-19T03:34:15.184Z'
+  'npm:tunnel-agent:20170305':
+    - phantomjs > request > tunnel-agent:
+        patched: '2018-10-24T04:34:43.519Z'
