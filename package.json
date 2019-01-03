@@ -40,7 +40,7 @@
     "random-useragent": "^0.3.1",
     "request": "^2.88.0",
     "sequelize": "^4.27.0",
-    "snyk": "^1.85.0",
+    "snyk": "^1.94.0",
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4"
   },
