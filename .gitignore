@@ -60,6 +60,5 @@ typings/
 # dotenv environment variables file
 .env
 
-browsercache
-cookies.txt
-mysql/*
+# CRNotify database file
+crnotify.db
