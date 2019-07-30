@@ -9,7 +9,7 @@ body {
 #wrapper {
   min-height: 100%;
   height: auto !important;
-  margin: 0 auto -170px; /* the bottom margin is the negative value of the footer's height */
+  margin: 0 auto -170px; 
   padding-bottom: 30px;
 }
 

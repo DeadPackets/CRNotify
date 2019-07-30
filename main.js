@@ -27,26 +27,13 @@ const app = express();
 //Socket
 const http = require('http');
 const server = http.createServer(app);
-const io = require('socket.io').listen(server);
-let clientSocket = '';
-
-io.on('connection', (socket) => {
-
-	socket.emit('auth');
-
-	socket.on(`${config.misc.secret}`, () => {
-		clientSocket = socket;
-		console.log(chalk.green('Our client connected!'));
-	});
-
-});
 
 //Handlebars
 const exphbs = require('express-handlebars');
 app.engine('handlebars', exphbs({
 	defaultLayout: 'main',
 	helpers: {
-		errorMessages: function(item) {
+		errorMessages: function (item) {
 			let final = '';
 			item.forEach((msg) => {
 				final = `<center><div class="alert alert-danger alert-dismissible fade show" role="alert">${msg}
@@ -55,7 +42,7 @@ app.engine('handlebars', exphbs({
 			});
 			return final;
 		},
-		successMessages: function(item) {
+		successMessages: function (item) {
 			let final = '';
 			item.forEach((msg) => {
 				final = `<center><div class="alert alert-success alert-dismissible fade show" role="alert">${msg}
@@ -64,25 +51,27 @@ app.engine('handlebars', exphbs({
 			});
 			return final;
 		},
-		crnList: function(item) {
+		crnList: function (item) {
 			let final = '';
-
-			item.forEach((crn) => {
-				final = final + `<div class="card" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">${crn.crn} [${crn.className}]</h5>
-    <h6 class="card-subtitle mb-2 text-muted">${crn.name}</h6>
-    <p class="card-text">This class is currently ${crn.state.toUpperCase()}</p>
-    <form action="/app/removeCRN" method="post">
-        <button type="submit" class="btn btn-danger" name="crn" value="${crn.crn}">Remove</button>
-    </form>
-  </div>
-</div>`;
-			});
-
+			if (item.length === 0) {
+				final += "<p>You aren't subscribed to any CRNs yet.</p>";
+			} else {
+				item.forEach((crn) => {
+					final = final + `<div class="card" style="width: 18rem;">
+					<div class="card-body">
+						<h5 class="card-title">${crn.crn} [${crn.className}]</h5>
+						<h6 class="card-subtitle mb-2 text-muted">${crn.name} ${crn.section} - ${crn.termID}</h6>
+						<p class="card-text">This class is currently <b>${(crn.state === 'Y') ? "open" : "closed"}</b>.</p>
+						<form action="/app/removeCRN" method="post">
+							<button type="submit" class="btn btn-danger" name="crn" value="${crn.crn}">Remove</button>
+						</form>
+					</div>
+					</div>`;
+				});
+			}
 			return final;
 		},
-		json: function(item) {
+		json: function (item) {
 			return JSON.stringify(item);
 		}
 	}
@@ -97,20 +86,30 @@ app.use(morgan('short'));
 //Cookies
 const expressSession = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(expressSession.Store);
+const sessionStore = new SequelizeStore({
+	db: db.sequelize
+});
 const cookieParser = require('cookie-parser');
+sessionStore.sync();
 
 app.use(expressSession({
-	secret: config.webserver.cookieSecret, httpOnly: true, proxy: true, maxAge: 7200000, //2 hours
+	secret: config.webserver.cookieSecret,
+	httpOnly: true,
+	proxy: true,
+	maxAge: 7200000, //2 hours
 	resave: false,
-	store: new SequelizeStore({db: db.sequelize}),
+	store: sessionStore,
 	saveUninitialized: true,
 	name: 'session'
 }));
 app.use(cookieParser());
 
+
 //POST request parser
 const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({
+	extended: false
+}));
 
 //Static Web Files
 app.use(express.static('web'));
@@ -138,7 +137,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-	db.Users.findById(id).then((user) => {
+	db.Users.findByPk(id).then((user) => {
 		if (user) {
 			done(null, user);
 		} else {
@@ -152,31 +151,40 @@ passport.use(new GoogleStrategy({
 	clientSecret: config.oauth.clientSecret,
 	callbackURL: config.oauth.callbackURL
 }, ((accessToken, refreshToken, profile, done) => {
-		db.Users.find({
-			where: {
-				googleID: profile.id
-			}
-		}).then((user) => {
-			//User already registered
-			if (user) {
-				return done(null, user);
-			} else {
-				//Insert new user in DB
-				db.Users.create({googleID: profile.id, token: accessToken, email: profile.emails[0].value, name: profile.displayName}).then((user) => {
-					sendWelcomeEmail(user.dataValues);
-					return done(null, user.dataValues);
-				});
-			}
-		});
-	})));
+	db.Users.findOne({
+		where: {
+			googleID: profile.id
+		}
+	}).then((user) => {
+		//User already registered
+		if (user) {
+			return done(null, user);
+		} else {
+			//Insert new user in DB
+			db.Users.create({
+				googleID: profile.id,
+				token: accessToken,
+				email: profile.emails[0].value,
+				name: profile.displayName
+			}).then((user) => {
+				sendWelcomeEmail(user.dataValues);
+				return done(null, user.dataValues);
+			});
+		}
+	});
+})));
 
 //General stuff
 app.get('/donate', (req, res) => {
-	res.render('donate', {path: 'Donate'});
+	res.render('donate', {
+		path: 'Donate'
+	});
 });
 
 app.get('/faq', (req, res) => {
-	res.render('faq', {path: 'FAQ'});
+	res.render('faq', {
+		path: 'FAQ'
+	});
 });
 
 app.get('/stats', (req, res) => {
@@ -210,7 +218,9 @@ app.get('/', (req, res) => {
 
 //Error 400
 app.get('/error_400', (req, res) => {
-	res.status(400).render('error_400', {path: 'Error'});
+	res.status(400).render('error_400', {
+		path: 'Error'
+	});
 });
 
 app.use('/app', (req, res, next) => {
@@ -226,7 +236,10 @@ app.use('/mobile_api', (req, res, next) => {
 	if (config.misc.enabled) {
 		next();
 	} else {
-		res.json({success: false, error: 'CRNotify is disabled.'});
+		res.json({
+			success: false,
+			error: 'CRNotify is disabled.'
+		});
 	}
 });
 
@@ -244,14 +257,20 @@ function isLoggedInMobile(req, res, next) {
 	if (req.query.token) {
 		authMobile(req.query.token, db, (err, data) => {
 			if (err) {
-				res.json({success: false, error: err});
+				res.json({
+					success: false,
+					error: err
+				});
 			} else {
 				req.user = data;
 				next();
 			}
 		});
 	} else {
-		res.json({success: false, error: 'Invalid Parameters.'});
+		res.json({
+			success: false,
+			error: 'Invalid Parameters.'
+		});
 	}
 }
 
@@ -297,7 +316,6 @@ app.get('/app/dashboard', (req, res) => {
 		success_messages: req.flash('success_message'),
 		path: 'Dashboard'
 	});
-	//res.send(req.user)
 });
 
 app.get('/app/manage', (req, res) => {
@@ -326,7 +344,9 @@ app.get('/app/settings', (req, res) => {
 app.get('/app/logout', (req, res) => {
 	req.logout();
 	req.session.destroy();
-	res.render('logout', {path: 'Logged Out'});
+	res.render('logout', {
+		path: 'Logged Out'
+	});
 });
 
 //API
@@ -335,22 +355,20 @@ app.post('/app/addcrn', (req, res) => {
 		res.redirect('/error_400');
 	}
 
-	if (req.body.crn && req.body.currentStatus) {
-		checkCRN(req.body.crn, req.body.currentStatus, req.user, db, clientSocket, (err, crnInfo, isNew) => {
+	if (req.body.crn && req.body.semester && req.body.subject && req.body.year) {
+		checkCRN(req.body, db, req.user, (err, crnInfo, isNew) => {
 			if (err) {
 				req.flash('error_message', err);
 				res.redirect('/app/manage');
 			} else {
-
 				//Because why not?
 				if (isNew) {
-					console.log(chalk.green(`${req.user.email} added a new CRN! [${crnInfo.crn}] (${crnInfo.className})`));
+					console.log(chalk.green(`${req.user.email} added a new CRN! (${crnInfo.crn} - ${crnInfo.termID}) [${crnInfo.className}]`));
 					req.flash('success_message', 'Successfully added new CRN!');
 				} else {
-					console.log(chalk.green(`${req.user.email} subscribed to CRN ${crnInfo.crn} [${crnInfo.className}]!`));
+					console.log(chalk.green(`${req.user.email} subscribed to a CRN! (${crnInfo.crn} - ${crnInfo.termID}) [${crnInfo.className}]!`));
 					req.flash('success_message', 'Successfully added CRN!');
 				}
-
 				res.redirect('/app/manage');
 			}
 		});
@@ -402,15 +420,23 @@ app.post('/app/changeSettings', (req, res) => {
 
 //API
 app.get('/status', (req, res) => {
-	res.json({enabled: config.misc.enabled});
+	res.json({
+		enabled: config.misc.enabled
+	});
 });
 
 app.post('/mobile_api/getCRNs', (req, res) => {
 	getUserCRNs(req.user, db, (err, data) => {
 		if (err) {
-			res.json({success: false, error: err});
+			res.json({
+				success: false,
+				error: err
+			});
 		} else {
-			res.json({success: true, data: data});
+			res.json({
+				success: true,
+				data: data
+			});
 		}
 	});
 });
@@ -419,13 +445,21 @@ app.post('/mobile_api/removeCRN', (req, res) => {
 	if (req.query.crn) {
 		removeCRN(req.query.crn, req.user, db, (err) => {
 			if (err) {
-				res.json({success: false, error: err});
+				res.json({
+					success: false,
+					error: err
+				});
 			} else {
-				res.json({success: true});
+				res.json({
+					success: true
+				});
 			}
 		});
 	} else {
-		res.json({success: false, error: 'Invalid Parameters.'});
+		res.json({
+			success: false,
+			error: 'Invalid Parameters.'
+		});
 	}
 });
 
@@ -433,13 +467,23 @@ app.post('/mobile_api/addCRN', (req, res) => {
 	if (req.query.crn && req.query.state) {
 		checkCRN(req.query.crn, req.query.state, req.user, db, clientSocket, (err, crnInfo, isNew) => {
 			if (err) {
-				res.json({success: false, error: err});
+				res.json({
+					success: false,
+					error: err
+				});
 			} else {
-				res.json({success: true, data: crnInfo, new: isNew});
+				res.json({
+					success: true,
+					data: crnInfo,
+					new: isNew
+				});
 			}
 		});
 	} else {
-		res.json({success: false, error: 'Invalid Parameters.'});
+		res.json({
+			success: false,
+			error: 'Invalid Parameters.'
+		});
 	}
 });
 
@@ -452,37 +496,15 @@ app.use((req, res) => {
 });
 
 //HTTP Server init
-server.listen(config.webserver.HTTP_PORT, 'localhost');
+server.listen(config.webserver.HTTP_PORT, config.webserver.HTTP_HOST);
 
 //WHERE THE MAGIC HAPPENS
 const crawlCRNS = require('./lib/crawlCRNS');
 
 if (config.misc.enabled) {
-
-	let lastRun = new Date();
-
-	function initCrawl() {
-		crawlCRNS(db, clientSocket, () => {
-			lastRun = new Date();
-			initCrawl();
-		});
-	}
-
-	setTimeout(() => {
-		initCrawl();
-	}, 10000);
-
-	//Every 5 min
-	setInterval(() => {
-		const now = new Date();
-		const timeDiff = Math.abs(now.getTime() - lastRun.getTime());
-		const secondsDiff = timeDiff / 1000;
-
-		//if lastRun > 10 minutes
-		if (secondsDiff > 600) {
-			console.log(chalk.red('Recovered from crash, restarting crawling function!'));
-			initCrawl();
-		}
-
-	}, 300000);
+	//Essentially, we need to crawl banner every x minutes and we need the function to loop.
+	crawlCRNS(db);
+	setInterval(async () => {
+		await crawlCRNS(db);
+	}, 300000)
 }

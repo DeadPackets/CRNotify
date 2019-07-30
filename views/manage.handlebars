@@ -12,35 +12,36 @@
 
   {{{errorMessages error_messages}}} {{{successMessages success_messages}}}
   <center>
-    <small class="donateMessage text-center">Enjoying CRNotify? How about you support me and the project by <a href="/donate" target="_blank">donating? (You can even donate by simply clicking the link!)</a></small>
+    <small class="donateMessage text-center">Enjoying CRNotify? How about you support me and the project by <a
+        href="/donate" target="_blank">donating? (You can even donate by simply clicking the link!)</a></small>
   </center>
 
   <div style="padding-top: 20px;">
     <ul class="nav nav-tabs justify-content-center">
       <li class="nav-item">
         <a class="nav-link" href="/app/dashboard">
-        <span class="icon is-small"><i class="fa fa-info-circle"></i></span>
-        <span>Info</span>
-      </a>
+          <span class="icon is-small"><i class="fa fa-info-circle"></i></span>
+          <span>Info</span>
+        </a>
       </li>
       <li class="nav-item">
         <a class="nav-link active" href="#">
-        <span class="icon is-small"><i class="fas fa-sliders-h"></i></span>
-        <span>Manage</span>
-      </a>
+          <span class="icon is-small"><i class="fas fa-sliders-h"></i></span>
+          <span>Manage</span>
+        </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/app/settings">
-        <span class="icon is-small"><i class="fas fa-cogs"></i></span>
-        <span>Settings</span>
-      </a>
+          <span class="icon is-small"><i class="fas fa-cogs"></i></span>
+          <span>Settings</span>
+        </a>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/app/logout">
-        <span id="logout" class="icon is-small"><i class="fas fa-sign-out-alt"></i></span>
-        <span id="logout">Log Out</span>
-      </a>
+          <span id="logout" class="icon is-small"><i class="fas fa-sign-out-alt"></i></span>
+          <span id="logout">Log Out</span>
+        </a>
       </li>
     </ul>
   </div>
@@ -49,18 +50,101 @@
 
     <h1 style="font-size: 32px; padding-bottom: 20px;">Want to add a new CRN?</h1>
     <form action="/app/addcrn" method="post">
-      <div class="form-group">
-        <label for="crn">CRN</label>
-        <input name="crn" type="text" class="form-control" id="crn"  placeholder="Enter CRN">
-        <small id="emailHelp" class="form-text text-muted">Just insert the CRN here.</small>
-      </div>
-      <div class="form-group">
-        <label for="crnState">Current State</label>
-        <select name="currentStatus" id="inputState" class="form-control">
-          <option>Open</option>
-          <option>Closed</option>
-        </select>
-        <small id="crnStatusTrust" class="form-text text-muted">Please check before putting this, I'm trusting you.</small>
+      <div class="form-row">
+        <div class="form-group col-sm-2">
+          <label for="crn">CRN</label>
+          <input name="crn" type="text" class="form-control" id="crn" placeholder="Enter CRN">
+          <small id="crnHelp" class="form-text text-muted">Just insert the CRN here.</small>
+        </div>
+        <div class="form-group col-sm-2">
+          <label for="subject">Subject</label>
+          <select name="subject" id="subject" class="form-control">
+            <OPTION VALUE="ACC">Accounting</OPTION>
+            <OPTION VALUE="ASE">Aerospace Engineering</OPTION>
+            <OPTION VALUE="ANT">Anthropology</OPTION>
+            <OPTION VALUE="ARA">Arabic Language _ Literature</OPTION>
+            <OPTION VALUE="ARC">Architecture</OPTION>
+            <OPTION VALUE="ART">Art and Art History</OPTION>
+            <OPTION VALUE="BIO">Biology</OPTION>
+            <OPTION VALUE="BME">Biomedical Engineering</OPTION>
+            <OPTION VALUE="BUS">Business</OPTION>
+            <OPTION VALUE="BIS">Business Information Systems</OPTION>
+            <OPTION VALUE="BLW">Business Legal Issues</OPTION>
+            <OPTION VALUE="CHE">Chemical Engineering</OPTION>
+            <OPTION VALUE="CHM">Chemistry</OPTION>
+            <OPTION VALUE="CVE">Civil Engineering</OPTION>
+            <OPTION VALUE="COE">Computer Engineering</OPTION>
+            <OPTION VALUE="CMP">Computer Science</OPTION>
+            <OPTION VALUE="DES">Design</OPTION>
+            <OPTION VALUE="ECO">Economics</OPTION>
+            <OPTION VALUE="EDU">Education</OPTION>
+            <OPTION VALUE="ELE">Electrical Engineering</OPTION>
+            <OPTION VALUE="NGN">Engineering</OPTION>
+            <OPTION VALUE="EGM">Engineering Management</OPTION>
+            <OPTION VALUE="ESM">Engineering Systems/Management</OPTION>
+            <OPTION VALUE="ENG">English Language</OPTION>
+            <OPTION VALUE="ELP">English Language Preparation</OPTION>
+            <OPTION VALUE="ELT">English Language Teaching</OPTION>
+            <OPTION VALUE="EWE">Environmental and Water Eng'g</OPTION>
+            <OPTION VALUE="ENV">Environmental Sciences</OPTION>
+            <OPTION VALUE="EMB">Executive MBA</OPTION>
+            <OPTION VALUE="FLM">Film</OPTION>
+            <OPTION VALUE="FIN">Finance</OPTION>
+            <OPTION VALUE="FRN">French</OPTION>
+            <OPTION VALUE="GEO">Geography</OPTION>
+            <OPTION VALUE="GMPA">Gulf Executive Master in PA</OPTION>
+            <OPTION VALUE="HRM">Heritage Management</OPTION>
+            <OPTION VALUE="HIS">History</OPTION>
+            <OPTION VALUE="INE">Industrial Engineering</OPTION>
+            <OPTION VALUE="IDS">Interdisciplinary Studies</OPTION>
+            <OPTION VALUE="IDE">Interior Design</OPTION>
+            <OPTION VALUE="INS">International Studies</OPTION>
+            <OPTION VALUE="LEAP">Learn English / American Prog</OPTION>
+            <OPTION VALUE="MGT">Management</OPTION>
+            <OPTION VALUE="MIS">Management Information Systems</OPTION>
+            <OPTION VALUE="MKT">Marketing</OPTION>
+            <OPTION VALUE="MCM">Mass Communication</OPTION>
+            <OPTION VALUE="MBA">Master of Business Admin</OPTION>
+            <OPTION VALUE="MTH">Math</OPTION>
+            <OPTION VALUE="MCE">Mechanical Engineering</OPTION>
+            <OPTION VALUE="MTR">Mechatronics</OPTION>
+            <OPTION VALUE="MUM">Multimedia</OPTION>
+            <OPTION VALUE="MHS">Museum and Heritage Studies</OPTION>
+            <OPTION VALUE="MUS">Music</OPTION>
+            <OPTION VALUE="PET">Petroleum Engineering</OPTION>
+            <OPTION VALUE="PHI">Philosophy</OPTION>
+            <OPTION VALUE="PHY">Physics</OPTION>
+            <OPTION VALUE="POL">Political Science</OPTION>
+            <OPTION VALUE="PSY">Psychology</OPTION>
+            <OPTION VALUE="QBA">Quantitative Business Analysis</OPTION>
+            <OPTION VALUE="SOC">Sociology</OPTION>
+            <OPTION VALUE="STA">Statistics</OPTION>
+            <OPTION VALUE="ABRD">Study Abroad Credit(s)</OPTION>
+            <OPTION VALUE="SCM">Supply Chain Management</OPTION>
+            <OPTION VALUE="THE">Theatre</OPTION>
+            <OPTION VALUE="THM">Theme Courses</OPTION>
+            <OPTION VALUE="TRA">Translation</OPTION>
+            <OPTION VALUE="TRS">Transportation Systems</OPTION>
+            <OPTION VALUE="UPA">University Preparation</OPTION>
+            <OPTION VALUE="UPL">Urban Planning</OPTION>
+            <OPTION VALUE="VIS">Visual Communication</OPTION>
+            <OPTION VALUE="WST">Women Studies</OPTION>
+            <OPTION VALUE="WRI">Writing Studies</OPTION>
+          </select>
+        </div>
+        <div class="form-group col-sm-2">
+          <label for="semester">Current Semester</label>
+          <select name="semester" id="semester" class="form-control">
+            <option selected>Fall</option>
+            <option>Spring</option>
+            <option>Summer I</option>
+            <option>Summer II</option>
+          </select>
+        </div>
+        <div class="form-group col-sm-2">
+          <label for="year">Current Year</label>
+          <input name="year" type="text" class="form-control" id="year" placeholder="Enter Year">
+        </div>
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
