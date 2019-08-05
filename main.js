@@ -82,6 +82,7 @@ app.set('view engine', 'handlebars');
 
 //HTTP Logger
 const morgan = require('morgan');
+app.set('trust proxy', true);
 app.use(morgan('short'));
 
 //Cookies
@@ -465,8 +466,8 @@ app.post('/mobile_api/removeCRN', (req, res) => {
 });
 
 app.post('/mobile_api/addCRN', (req, res) => {
-	if (req.query.crn && req.query.state) {
-		checkCRN(req.query.crn, req.query.state, req.user, db, clientSocket, (err, crnInfo, isNew) => {
+	if (req.query.crn && req.query.year && req.query.subject && req.query.semester) {
+		checkCRN(req.query, db, req.user, (err, crnInfo, isNew) => {
 			if (err) {
 				res.json({
 					success: false,
