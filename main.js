@@ -63,6 +63,7 @@ app.engine('handlebars', exphbs({
 						<h6 class="card-subtitle mb-2 text-muted">${crn.name} ${crn.section} - ${crn.termID}</h6>
 						<p class="card-text">This class is currently <b>${(crn.state === 'Y') ? "open" : "closed"}</b>.</p>
 						<form action="/app/removeCRN" method="post">
+							<input hidden name="termID" value="${crn.termID}" />
 							<button type="submit" class="btn btn-danger" name="crn" value="${crn.crn}">Remove</button>
 						</form>
 					</div>
@@ -81,6 +82,7 @@ app.set('view engine', 'handlebars');
 
 //HTTP Logger
 const morgan = require('morgan');
+app.set('trust proxy', true);
 app.use(morgan('short'));
 
 //Cookies
@@ -383,7 +385,7 @@ app.post('/app/removecrn', (req, res) => {
 	}
 
 	if (req.body.crn) {
-		removeCRN(req.body.crn, req.user, db, (err) => {
+		removeCRN(req.body.crn, req.body.termID, req.user, db, (err) => {
 			if (err) {
 				req.flash('error_message', err);
 				res.redirect('/app/manage');
@@ -443,7 +445,7 @@ app.post('/mobile_api/getCRNs', (req, res) => {
 
 app.post('/mobile_api/removeCRN', (req, res) => {
 	if (req.query.crn) {
-		removeCRN(req.query.crn, req.user, db, (err) => {
+		removeCRN(req.query.crn, req.query.termID, req.user, db, (err) => {
 			if (err) {
 				res.json({
 					success: false,
@@ -464,8 +466,8 @@ app.post('/mobile_api/removeCRN', (req, res) => {
 });
 
 app.post('/mobile_api/addCRN', (req, res) => {
-	if (req.query.crn && req.query.state) {
-		checkCRN(req.query.crn, req.query.state, req.user, db, clientSocket, (err, crnInfo, isNew) => {
+	if (req.query.crn && req.query.year && req.query.subject && req.query.semester) {
+		checkCRN(req.query, db, req.user, (err, crnInfo, isNew) => {
 			if (err) {
 				res.json({
 					success: false,
@@ -506,5 +508,5 @@ if (config.misc.enabled) {
 	crawlCRNS(db);
 	setInterval(async () => {
 		await crawlCRNS(db);
-	}, 300000)
+	}, config.misc.scrapeDelay)
 }
