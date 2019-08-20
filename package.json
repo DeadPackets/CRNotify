@@ -33,7 +33,7 @@
     "passport": "^0.4.0",
     "passport-google-oauth20": "^2.0.0",
     "puppeteer": "^1.19.0",
-    "sequelize": "^5.9.0",
+    "sequelize": "^5.15.1",
     "snyk": "^1.201.0",
     "sqlite3": "^4.0.9"
   },
