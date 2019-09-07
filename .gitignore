@@ -60,5 +60,6 @@ typings/
 # dotenv environment variables file
 .env
 
-# CRNotify database file
-crnotify.db
+# database file
+*.db
+
