@@ -21,8 +21,8 @@ async function crawl() {
         classType: Sequelize.STRING,
         isLab: Sequelize.BOOLEAN,
         instructor: Sequelize.STRING,
-        startTime: Sequelize.DATE,
-        endTime: Sequelize.DATE,
+        startTime: Sequelize.TIME,
+        endTime: Sequelize.TIME,
         isSunday: Sequelize.BOOLEAN,
         isMonday: Sequelize.BOOLEAN,
         isTuesday: Sequelize.BOOLEAN,
@@ -31,7 +31,9 @@ async function crawl() {
         levels: Sequelize.STRING,
         attributes: Sequelize.STRING,
         credits: Sequelize.INTEGER,
-        classroom: Sequelize.STRING
+        classroom: Sequelize.STRING,
+        scheduleType: Sequelize.STRING,
+        seatsAvailable: Sequelize.BOOLEAN
     });
 
     const instructors = sequelize.define('instructors', {
@@ -52,6 +54,24 @@ async function crawl() {
         },
         shortName: Sequelize.STRING,
         longName: Sequelize.STRING
+    });
+
+    const levels = sequelize.define('levels', {
+        id: {
+            type: Sequelize.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        level: Sequelize.STRING
+    });
+
+    const attributes = sequelize.define('attributes', {
+        id: {
+            type: Sequelize.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        attribute: Sequelize.STRING
     });
 
     await sequelize.authenticate();
@@ -115,8 +135,8 @@ async function crawl() {
     console.log(chalk.blue(`${subjectFullName.length} subjects inserted into the database.`));
 
     //Time to crawl CRNs
-    // await page.select('select[name="sel_subj"]', ...subjectShortName);
-    await page.select('select[name="sel_subj"]', 'ACC');
+    await page.select('select[name="sel_subj"]', ...subjectShortName);
+    // await page.select('select[name="sel_subj"]', 'COE');
     await page.waitForSelector('input[type="submit"]').catch(async err => {
         await browser.close();
         console.log("INPUT TIMEOUT");
@@ -125,40 +145,155 @@ async function crawl() {
     await page.waitForSelector('td.dddefault').catch(async err => {
         await browser.close();
     });
+    await page.waitForSelector('th a').catch(async err => {
+        await browser.close();
+    });
+    await page.waitForSelector('span.releasetext').catch(async err => {
+        await browser.close();
+    });
     console.log(chalk.blue('CRN Page loaded.'));
 
-    const bruhMoment = await page.$$eval('th a', result => {
-        result.map(item => {
-            return item.parentElement.parentElement.innerText;
-            let descriptionElement = item.parentElement.parentElement.nextElementSibling;
+    const totalResults = await page.$$eval('th a', result => {
+        let returnedResult = {
+            crnInfo: [],
+            instructorInfo: []
+        };
+        for (let i = 0; i < result.length; i++) {
+            let crnTitle = result[i].innerText.split(' - ');
+            let descriptionElement = result[i].parentElement.parentElement.nextElementSibling;
             let descriptionText = descriptionElement.innerText;
             let classTable = descriptionElement.querySelector('table');
-            let result =  {
-                isLab: false,
-                fullTitle: crnTitle[0],
-                crn: crnTitle[1],
-                shortTitle: crnTitle[2],
-                section: crnTitle[3],
-                levels: descriptionText.match(/(?<=Levels: ).*/g)[0].split(', '),
-                attributes: descriptionText.match(/(?<=Attributes: ).*/g)[0].split(', '),
-                scheduleType: descriptionText.match(/.+?(?= Schedule)/g)[0],
-                credits: parseInt(descriptionText.match(/.+?(?= Credits)/g)[0]),
-                classType: classTable.querySelectorAll('td')[6].innerText,
-                classroom: classTable.querySelectorAll('td')[4].innerText,
-                startTime: classTable.querySelectorAll('td')[1].innerText.split(' - ')[0],
-                endTime: classTable.querySelectorAll('td')[1].innerText.split(' - ')[1],
-                instructor: classTable.querySelectorAll('td')[7].innerText.split('(P)')[0],
-                days: classTable.querySelectorAll('td')[2].innerText
+
+            let info =  {
+                'crn': crnTitle[1],
+                'subject': crnTitle[2].split(' ')[0],
+                'classTitle': crnTitle[0],
+                'classShortName': crnTitle[2],
+                'classNumber': crnTitle[2].split(' ')[1],
+                'classSection': crnTitle[3],
+                'classType': classTable.querySelectorAll('td')[6].innerText,
+                'isLab': (crnTitle.length === 5 || classTable.querySelectorAll('td')[6].innerText === 'Lab'),
+                'instructor': classTable.querySelectorAll('td')[7].innerText.split('(P)')[0],
+                'startTime': new Date(`0, ${classTable.querySelectorAll('td')[1].innerText.split(' - ')[0]}`).toString(),
+                'endTime': new Date(`0, ${classTable.querySelectorAll('td')[1].innerText.split(' - ')[1]}`).toString(),
+                'isSunday': false,
+                'isMonday': false,
+                'isTuesday': false,
+                'isWednesday': false,
+                'isThursday': false,
+                'levels': descriptionText.match(/(?<=Levels: ).*/g)[0] || null,
+                'attributes': null,
+                'scheduleType': descriptionText.match(/.+?(?= Schedule)/g)[0] || null,
+                'credits': parseInt(descriptionText.match(/.+?(?= Credits)/g)[0]) || null,
+                'classroom': classTable.querySelectorAll('td')[4].innerText,
+                'seatsAvailable': (classTable.querySelectorAll('td')[3].innerText === 'Y')
             }
-            result.instructorEmail = (result.instructor === 'TBA') ? 'none' : classTable.querySelector('td a').href.split('mailto:')[1];
-            result.isLab = (crnTitle.length === 5);
-            return result;
-        })
+
+            //Slight exception for MTH 103
+            if (crnTitle.length === 5 && crnTitle[1].includes('Lab')) {
+                info['crn'] = crnTitle[2];
+                info['subject'] = crnTitle[3].split(' ')[0];
+                info['classNumber'] = crnTitle[3].split(' ')[1];
+                info['classTitle'] = `${crnTitle[0]} ${crnTitle[1]}`;
+                info['classShortName'] = crnTitle[3];
+                info['classSection'] = crnTitle[4];
+            } else if (crnTitle[1].includes('Targeted eLipo')) { //Another exception :)
+                info['crn'] = crnTitle[2];
+                info['subject'] = crnTitle[3].split(' ')[0];
+                info['classNumber'] = crnTitle[3].split(' ')[1];
+                info['classTitle'] = `${crnTitle[0]} ${crnTitle[1]}`;
+                info['classShortName'] = crnTitle[3];
+                info['classSection'] = crnTitle[4];
+            }
+
+            if (descriptionText.match(/(?<=Attributes: ).*/g)) {
+                info['attributes'] = descriptionText.match(/(?<=Attributes: ).*/g)[0]
+            }
+
+            let instructorInfo = {
+                name: classTable.querySelectorAll('td')[7].innerText.split('(P)')[0].trim(),
+                email: (info.instructor === 'TBA') ? 'none' : classTable.querySelector('td a').href.split('mailto:')[1].trim()
+            };
+            
+            let days = classTable.querySelectorAll('td')[2].innerText;
+            if (days.includes('U')) {
+                info['isSunday'] = true;
+            } else if (days.includes('M')) {
+                info['isMonday'] = true;
+            } else if (days.includes('T')) {
+                info['isTuesday'] = true;
+            } else if (days.includes('W')) {
+                info['isWednesday'] = true;
+            } else if (days.includes('R')) {
+                info['isThursday'] = true;
+            }
+            returnedResult.crnInfo.push(info);
+            returnedResult.instructorInfo.push(instructorInfo);
+        }
+        return returnedResult;
     })
 
-    console.log(bruhMoment);
+    for (let i = 0; i < totalResults.crnInfo.length; i++) {
+        //First, we insert the instructor into the database
+        let res = await instructors.findOrCreate({
+            where: {
+                email: totalResults.instructorInfo[i].email
+            },
+            defaults: totalResults.instructorInfo[i]
+        });
+
+        if (res[0]._options.isNewRecord) {
+            console.log(chalk.magenta(`Inserting instructor ${totalResults.instructorInfo[i].name} [${totalResults.instructorInfo[i].email}]`))
+        }
+        
+
+        //Next, we insert the attributes and levels
+        if (totalResults.crnInfo[i].attributes) {
+            let attributesArr = totalResults.crnInfo[i].attributes.split(', ')
+            for (let j = 0; j < attributesArr.length; j++) {
+                let res = await attributes.findOrCreate({
+                    where: {
+                        attribute: attributesArr[j]
+                    },
+                    defaults: {
+                        attribute: attributesArr[j]
+                    }
+                })
+
+                if (res[0]._options.isNewRecord) {
+                    console.log(chalk.yellow(`Inserting attribute ${attributesArr[j]}`))
+                }
+            }
+        }
+
+        if (totalResults.crnInfo[i].levels) {
+            let levelsArr = totalResults.crnInfo[i].levels.split(', ')
+            for (let j = 0; j < levelsArr.length; j++) {
+                let res = await levels.findOrCreate({
+                    where: {
+                        level: levelsArr[j]
+                    },
+                    defaults: {
+                        level: levelsArr[j]
+                    }
+                })
+
+                if (res[0]._options.isNewRecord) {
+                    console.log(chalk.blue(`Inserting level ${levelsArr[j]}`))
+                }
+            }
+        }
+
+        console.log(chalk.green(`Inserting CRN ${totalResults.crnInfo[i].crn} - ${totalResults.crnInfo[i].classTitle} - ${totalResults.crnInfo[i].classShortName}`))
+        await CRNS.create(totalResults.crnInfo[i]);
+    }
+
+
     await browser.close();
 
 }
 
-crawl();
+crawl().catch((err) => {
+    console.log(err);
+    console.log(chalk.red('Error! Quitting now...'));
+});
