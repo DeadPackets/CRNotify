@@ -6,11 +6,6 @@ const config = require('./config.json');
 
 //Create our global browser instance
 const puppeteer = require('puppeteer');
-let browser;
-(async () => {
-	browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
-})();
-
 
 //Lib
 const checkCRN = require('./lib/checkCRN');
@@ -506,14 +501,16 @@ app.use((req, res) => {
 });
 
 //HTTP Server init
-server.listen(config.webserver.HTTP_PORT, config.webserver.HTTP_HOST);
+server.listen(config.webserver.HTTP_PORT, config.webserver.HTTP_HOST, async () => {
+	browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+	console.log(chalk.green(`Web server started.`));
+});
 
 //WHERE THE MAGIC HAPPENS
 const crawlCRNS = require('./lib/crawlCRNS');
 
 if (config.misc.enabled) {
 	//Essentially, we need to crawl banner every x minutes and we need the function to loop.
-	crawlCRNS(db, browser);
 	setInterval(async () => {
 		await crawlCRNS(db, browser);
 	}, config.misc.scrapeDelay)
