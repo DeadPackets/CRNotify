@@ -1,6 +1,6 @@
 {
   "name": "crnotify",
-  "version": "1.0.0",
+  "version": "2.5.0-stable",
   "description": "Something that tells AUS students about changes in their desired CRNs. ",
   "main": "main.js",
   "scripts": {
