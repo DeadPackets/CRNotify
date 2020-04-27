@@ -4,6 +4,14 @@
 //Config
 const config = require('./config.json');
 
+//Create our global browser instance
+const puppeteer = require('puppeteer');
+let browser;
+(async () => {
+	browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+})();
+
+
 //Lib
 const checkCRN = require('./lib/checkCRN');
 const getUserCRNs = require('./lib/getUserCRNs');
@@ -27,14 +35,6 @@ const app = express();
 //Socket
 const http = require('http');
 const server = http.createServer(app);
-
-//Create our global browser instance
-const puppeteer = require('puppeteer');
-let browser;
-(async () => {
-	browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
-})();
-
 
 //Handlebars
 const exphbs = require('express-handlebars');

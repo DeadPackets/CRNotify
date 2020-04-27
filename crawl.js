@@ -17,7 +17,7 @@ async function crawl() {
         classTitle: Sequelize.STRING,
         classShortName: Sequelize.STRING,
         classNumber: Sequelize.STRING,
-        classSection: Sequelize.INTEGER,
+        classSection: Sequelize.INTEGER,    
         classType: Sequelize.STRING,
         isLab: Sequelize.BOOLEAN,
         instructor: Sequelize.STRING,
