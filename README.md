@@ -1,5 +1,4 @@
 <p align="center">
-  <h1>CRNotify</h1>
   <img src="https://github.com/DeadPackets/CRNotify/raw/master/logo.jpg">
 </p>
 
