@@ -28,6 +28,14 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 
+//Create our global browser instance
+const puppeteer = require('puppeteer');
+let browser;
+(async () => {
+	browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+})();
+
+
 //Handlebars
 const exphbs = require('express-handlebars');
 app.engine('handlebars', exphbs({
@@ -358,7 +366,7 @@ app.post('/app/addcrn', (req, res) => {
 	}
 
 	if (req.body.crn && req.body.semester && req.body.subject && req.body.year) {
-		checkCRN(req.body, db, req.user, (err, crnInfo, isNew) => {
+		checkCRN(req.body, db, req.user, browser, (err, crnInfo, isNew) => {
 			if (err) {
 				req.flash('error_message', err);
 				res.redirect('/app/manage');
@@ -505,8 +513,8 @@ const crawlCRNS = require('./lib/crawlCRNS');
 
 if (config.misc.enabled) {
 	//Essentially, we need to crawl banner every x minutes and we need the function to loop.
-	crawlCRNS(db);
+	crawlCRNS(db, browser);
 	setInterval(async () => {
-		await crawlCRNS(db);
+		await crawlCRNS(db, browser);
 	}, config.misc.scrapeDelay)
 }
