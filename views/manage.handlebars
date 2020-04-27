@@ -1,12 +1,12 @@
 <div id="app" class="container">
 
-  <div class="animated fadeInDown text-center">
+  <div class="text-center">
     <h1 class="mainTitle">
       CRNotify
     </h1>
   </div>
 
-  <div class="animated fadeInDown text-center">
+  <div class="text-center">
     <h3 class="dashboardTitle">Welcome, {{{user.name}}}</h3>
   </div>
 
@@ -31,13 +31,6 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/app/settings">
-          <span class="icon is-small"><i class="fas fa-cogs"></i></span>
-          <span>Settings</span>
-        </a>
-        </a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link" href="/app/logout">
           <span id="logout" class="icon is-small"><i class="fas fa-sign-out-alt"></i></span>
           <span id="logout">Log Out</span>
@@ -46,7 +39,7 @@
     </ul>
   </div>
 
-  <div class="animated fadeInDown container w-100" style="padding-top: 20px;">
+  <div class="container w-100" style="padding-top: 20px;">
 
     <h1 style="font-size: 32px; padding-bottom: 20px;">Want to add a new CRN?</h1>
     <form action="/app/addcrn" method="post">

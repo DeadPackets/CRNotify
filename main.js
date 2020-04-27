@@ -180,16 +180,8 @@ passport.use(new GoogleStrategy({
 })));
 
 //General stuff
-app.get('/donate', (req, res) => {
-	res.render('donate', {
-		path: 'Donate'
-	});
-});
-
 app.get('/faq', (req, res) => {
-	res.render('faq', {
-		path: 'FAQ'
-	});
+	res.redirect('https://github.com/DeadPackets/CRNotify');
 });
 
 app.get('/stats', (req, res) => {
@@ -334,15 +326,6 @@ app.get('/app/manage', (req, res) => {
 			user: req.user,
 			crnData: data
 		});
-	});
-});
-
-app.get('/app/settings', (req, res) => {
-	res.render('settings', {
-		path: 'Settings',
-		error_messages: req.flash('error_message'),
-		success_messages: req.flash('success_message'),
-		settingsData: req.user
 	});
 });
 
