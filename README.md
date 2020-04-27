@@ -1,4 +1,7 @@
-![CRNotify](https://github.com/DeadPackets/CRNotify/raw/master/logo.jpg "CRNotify")
+<p align="center">
+  <h1>CRNotify</h1>
+  <img src="https://github.com/DeadPackets/CRNotify/raw/master/logo.jpg">
+</p>
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/DeadPackets/CRNotify)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/DeadPackets/CRNotify)
