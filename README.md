@@ -1,18 +1,17 @@
 <p align="center">
   <img src="https://github.com/DeadPackets/CRNotify/raw/master/logo.jpg">
 </p>
-
-![GitHub last commit](https://img.shields.io/github/last-commit/DeadPackets/CRNotify)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/DeadPackets/CRNotify)
-![GitHub](https://img.shields.io/github/license/DeadPackets/CRNotify)
-![GitHub issues](https://img.shields.io/github/issues/DeadPackets/CRNotify)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/DeadPackets/CRNotify)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/DeadPackets/CRNotify)
-![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/DeadPackets/CRNotify)
-![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)
-![ForTheBadge uses-js](http://ForTheBadge.com/images/badges/uses-js.svg)
-![Dependencies](https://david-dm.org/DeadPackets/CRNotify.svg)
-
+<p align="center">
+   <img src="https://img.shields.io/github/last-commit/DeadPackets/CRNotify" />
+   <img src="https://img.shields.io/github/package-json/v/DeadPackets/CRNotify" />
+   <img src="https://img.shields.io/github/license/DeadPackets/CRNotify" />
+   <img src="https://img.shields.io/github/issues/DeadPackets/CRNotify" />
+   <img src="https://img.shields.io/github/issues-pr/DeadPackets/CRNotify" />
+   <img src="https://img.shields.io/github/languages/code-size/DeadPackets/CRNotify" />
+   <img src="https://img.shields.io/snyk/vulnerabilities/github/DeadPackets/CRNotify" />
+   <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" />
+   <img src="https://david-dm.org/DeadPackets/CRNotify.svg" />
+</p>
 This is a system that crawls AUS' Banner website to check for updates about certain CRNs that students can "Subscribe" to their status. It uses Google's `puppeteer` library to run a headless Chrome browser and scrape the Banner website.
 
 ### Mobile App
