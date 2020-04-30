@@ -6,6 +6,7 @@ const config = require('./config.json');
 
 //Create our global browser instance
 const puppeteer = require('puppeteer');
+let browser;
 
 //Lib
 const checkCRN = require('./lib/checkCRN');
@@ -117,7 +118,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 //Static Web Files
-app.use(express.static('web'));
+app.use(express.static('web', {maxAge: 86400000 })); //Cache of 1 day
 
 //Auth
 const passport = require('passport');
