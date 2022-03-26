@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "snyk-protect": "snyk protect",
+    "snyk-protect": "snyk-protect",
     "prepare": "npm run snyk-protect"
   },
   "repository": {
@@ -34,8 +34,8 @@
     "passport-google-oauth20": "^2.0.0",
     "puppeteer": "^3.0.1",
     "sequelize": "^5.21.7",
-    "snyk": "^1.425.4",
-    "sqlite3": "^4.1.1"
+    "sqlite3": "^4.1.1",
+    "@snyk/protect": "latest"
   },
   "snyk": true
 }
